@@ -42,7 +42,7 @@ public class CacheTest {
         assertThat(customerCacheMiss.name()).isEqualTo(customer.getName());
         assertThat(customerCacheMiss.email()).isEqualTo(customer.getEmail());
 
-        // second call → DB
+        // second call → cache
         customerService.getCustomer(customerId);
 
         Cache.ValueWrapper wrapper =
