@@ -1,4 +1,4 @@
-package com.example.cache;
+package com.example.cache.composite;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -24,10 +24,12 @@ public class RedisCacheConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json()));
     }
 
-    @Bean(name = "redisCacheManager")
-    public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory, RedisCacheConfiguration cacheConfiguration) {
-        return RedisCacheManager.RedisCacheManagerBuilder
-                .fromConnectionFactory(connectionFactory)
+    @Bean
+    public CacheManager redisCacheManager(
+            RedisConnectionFactory connectionFactory,
+            RedisCacheConfiguration cacheConfiguration) {
+
+        return RedisCacheManager.builder(connectionFactory)
                 .withCacheConfiguration("customerCache", cacheConfiguration)
                 .build();
     }
