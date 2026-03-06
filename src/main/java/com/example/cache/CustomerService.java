@@ -1,5 +1,6 @@
 package com.example.cache;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,19 @@ public class CustomerService {
         }else{
             throw new RuntimeException("Customer not found");
         }
+    }
+
+    @CacheEvict(cacheNames = "customerCache", key = "#id")
+    public CustomerDTO updateCustomer(Long id, String name, String email) {
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        customer.setName(name);
+        customer.setEmail(email);
+
+        customerRepository.save(customer);
+
+        return new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail());
     }
 }

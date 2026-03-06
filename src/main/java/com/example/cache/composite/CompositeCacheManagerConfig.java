@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class CompositeCacheManagerConfig {
 
-    @Bean()
-    @Primary
-    CacheManager cacheManager(@Qualifier("caffeineCacheManager") CacheManager caffeineCacheManager, @Qualifier("redisCacheManager") CacheManager redisCacheManager) {
-        CompositeCacheManager compositeCacheManager = new CompositeCacheManager(caffeineCacheManager, redisCacheManager);
-        compositeCacheManager.setFallbackToNoOpCache(false);
-        return compositeCacheManager;
-    }
+//    @Bean()
+//    @Primary
+//    CacheManager cacheManager(@Qualifier("caffeineCacheManager") CacheManager caffeineCacheManager, @Qualifier("redisCacheManager") CacheManager redisCacheManager) {
+//        CompositeCacheManager compositeCacheManager = new CompositeCacheManager(caffeineCacheManager, redisCacheManager);
+//        compositeCacheManager.setFallbackToNoOpCache(false);
+//        return compositeCacheManager;
+//    }
 }

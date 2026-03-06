@@ -26,6 +26,9 @@ public class Customer {
     @Column(unique = true)
     private String email;
 
+    @Version
+    private Long version;
+
     public Customer(String name, String email) {
         this.name = name;
         this.email = email;
