@@ -1,7 +1,9 @@
 package com.example.cache;
 
+import com.example.cache.kafka.CustomerCreatedEvent;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,8 +13,12 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    private static final String TOPIC = "customer_topic";
+    private final KafkaTemplate<String, CustomerCreatedEvent> kafkaTemplate;
+
+    public CustomerService(CustomerRepository customerRepository, KafkaTemplate<String, CustomerCreatedEvent> kafkaTemplate) {
         this.customerRepository = customerRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Cacheable(cacheNames = "customerCache", key = "#id")
@@ -31,7 +37,15 @@ public class CustomerService {
         Customer customer = new Customer();
         customer.setName(name);
         customer.setEmail(email);
-       return customerRepository.save(customer).getId();
+        Long customerId = customerRepository.save(customer).getId();
+        
+        // Send Kafka event
+        if (kafkaTemplate != null) {
+            CustomerCreatedEvent event = new CustomerCreatedEvent(customerId, name, email);
+            kafkaTemplate.send(TOPIC, customerId.toString(), event);
+        }
+        
+        return customerId;
     }
 
     public CustomerDTO getCustomerByEmail(String email){

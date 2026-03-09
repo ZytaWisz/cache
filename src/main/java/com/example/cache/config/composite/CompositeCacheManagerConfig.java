@@ -1,4 +1,4 @@
-package com.example.cache.composite;
+package com.example.cache.config.composite;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;

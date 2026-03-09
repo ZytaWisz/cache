@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -14,6 +15,10 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @Testcontainers
+@TestPropertySource(properties = {
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.test.database.replace=none"
+})
 public class CustomerCacheIntegrationTestConfig extends RedisIntegrationTestConfig {
 
     @Autowired
@@ -29,6 +34,7 @@ public class CustomerCacheIntegrationTestConfig extends RedisIntegrationTestConf
     void setup() {
         // ensure clean state
         cacheManager.getCache("customerCache").clear();
+        customerRepository.deleteAll();
     }
 
     @Test

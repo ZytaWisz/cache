@@ -1,10 +1,12 @@
 package com.example.cache;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +23,11 @@ public class CustomerCacheUpdateIntegrationTestConfig extends RedisIntegrationTe
 
     @Autowired
     private CacheManager cacheManager;
+
+    @BeforeEach
+    void cleanDatabase() {
+        customerRepository.deleteAll();
+    }
 
     @Test
     void shouldEvictCacheAfterUpdate() {
