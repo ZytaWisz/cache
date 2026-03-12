@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -69,5 +70,11 @@ public class CustomerService {
         customerRepository.save(customer);
 
         return new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail());
+    }
+
+    public List<CustomerDTO> getCustomers() {
+        return customerRepository.findAll().stream()
+                .map(customer -> new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail()))
+                .toList();
     }
 }

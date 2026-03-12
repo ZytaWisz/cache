@@ -21,3 +21,9 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+
+  redis:
+      image: redis:7-alpine
+      container_name: redis
+      ports:
+       - "6379:6379"
