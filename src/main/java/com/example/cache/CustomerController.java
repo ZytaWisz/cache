@@ -13,8 +13,8 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/customer")
-    public Long createCustomer(final String name, final String email) {
-        return customerService.createCustomer(name, email);
+    public Long createCustomer(@RequestBody CreateCustomerRequest createCustomerRequest) {
+        return customerService.createCustomer(createCustomerRequest.getName(), createCustomerRequest.getEmail());
     }
 
     @GetMapping("/customer/{id}")
