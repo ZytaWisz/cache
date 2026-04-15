@@ -29,9 +29,10 @@ services:
       - "8090:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
-    depends_on:
-      - broker
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: localhost:30092
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   redis:
       image: redis:7-alpine
       container_name: redis
