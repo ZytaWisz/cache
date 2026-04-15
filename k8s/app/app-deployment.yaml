@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: cache-app
-          image: cache-app:latest        # <-- replace with your actual image name/tag
+          image: cache-app:1.0.1        # <-- replace with your actual image name/tag
           imagePullPolicy: Never  # use Always if pulling from a remote registry
           ports:
             - containerPort: 8080

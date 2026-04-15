@@ -31,7 +31,7 @@ spec:
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
               value: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT"
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092"
+              value: "PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092"
             - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
               value: "1"
             - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
