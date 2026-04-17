@@ -1,4 +1,4 @@
-package com.example.cache.config;
+package com.example.cache.config.twolevel;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;

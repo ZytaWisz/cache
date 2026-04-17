@@ -3,10 +3,9 @@ package com.example.cache.customer.service;
 import com.example.cache.customer.entity.Customer;
 import com.example.cache.customer.dto.CustomerDTO;
 import com.example.cache.customer.repository.CustomerRepository;
-import com.example.cache.event.CustomerEvent;
+import com.example.cache.customer.event.CustomerEvent;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

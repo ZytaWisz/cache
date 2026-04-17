@@ -1,12 +1,13 @@
 package com.example.cache.customer.listener;
 
-import com.example.cache.event.CustomerEvent;
+import com.example.cache.customer.event.CustomerEvent;
 import org.springframework.cache.CacheManager;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Objects;
-
+@Component
 public class CustomerUpdateCacheListener {
 
     private final CacheManager cacheManager;

@@ -1,4 +1,4 @@
-package com.example.cache.config;
+package com.example.cache.config.twolevel;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.cache.Cache;

@@ -1,4 +1,4 @@
-package com.example.cache.config;
+package com.example.cache.config.twolevel;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;

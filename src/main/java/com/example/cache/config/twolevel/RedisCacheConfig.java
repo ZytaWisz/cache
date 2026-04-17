@@ -1,4 +1,4 @@
-package com.example.cache.config;
+package com.example.cache.config.twolevel;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
