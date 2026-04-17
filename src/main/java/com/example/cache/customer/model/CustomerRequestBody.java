@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CreateCustomerRequest {
+public class CustomerRequestBody {
     String name;
     String email;
 
-    public CreateCustomerRequest(String name, String email) {
+    public CustomerRequestBody(String name, String email) {
         this.name = name;
         this.email = email;
     }

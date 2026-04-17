@@ -1,6 +1,7 @@
 package com.example.cache.customer.listener;
 
-import com.example.cache.customer.event.CustomerEvent;
+import com.example.cache.customer.event.CustomerCreatedEvent;
+import com.example.cache.customer.event.CustomerUpdatedEvent;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -17,7 +18,7 @@ public class CustomerUpdateCacheListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handle(CustomerEvent event) {
+    public void handle(CustomerUpdatedEvent event) {
         Objects.requireNonNull(cacheManager.getCache("customerCache")).evict(event.customerId());
     }
 }

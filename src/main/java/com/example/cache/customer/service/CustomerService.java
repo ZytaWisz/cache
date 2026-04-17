@@ -2,8 +2,9 @@ package com.example.cache.customer.service;
 
 import com.example.cache.customer.entity.Customer;
 import com.example.cache.customer.dto.CustomerDTO;
+import com.example.cache.customer.event.CustomerCreatedEvent;
+import com.example.cache.customer.event.CustomerUpdatedEvent;
 import com.example.cache.customer.repository.CustomerRepository;
-import com.example.cache.customer.event.CustomerEvent;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class CustomerService {
         customer.setEmail(email);
         Long customerId = customerRepository.save(customer).getId();
 
-        applicationEventPublisher.publishEvent(new CustomerEvent(customer.getId(), customer.getName(),  customer.getEmail()));
+        applicationEventPublisher.publishEvent(new CustomerCreatedEvent(customer.getId(), customer.getName(),  customer.getEmail()));
 
         return customerId;
     }
@@ -66,7 +67,7 @@ public class CustomerService {
         customer.setEmail(email);
 
         customerRepository.save(customer);
-        applicationEventPublisher.publishEvent(new CustomerEvent(customer.getId(), customer.getName(),  customer.getEmail()));
+        applicationEventPublisher.publishEvent(new CustomerUpdatedEvent(customer.getId(), customer.getName(),  customer.getEmail()));
 
         return new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail());
     }

@@ -1,6 +1,6 @@
 package com.example.cache.customer.listener;
 
-import com.example.cache.customer.event.CustomerEvent;
+import com.example.cache.customer.event.CustomerUpdatedEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -16,7 +16,7 @@ public class KafkaUpdateCustomerListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void publishToKafka(CustomerEvent event) {
-        kafkaTemplate.send(CUSTOMER_TOPIC, String.valueOf(event.customerId()), String.format("CUSTOMER CREATED: ID: %s, name: %s,email: %s.", event.customerId(), event.name(), event.email()));
+    public void publishToKafka(CustomerUpdatedEvent event) {
+        kafkaTemplate.send(CUSTOMER_TOPIC, String.valueOf(event.customerId()), String.format("CUSTOMER UPDATED: ID: %s, name: %s,email: %s.", event.customerId(), event.name(), event.email()));
     }
 }
