@@ -1,9 +1,9 @@
-package com.example.cache;
+package com.example.cache.customer.repository;
 
+import com.example.cache.customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

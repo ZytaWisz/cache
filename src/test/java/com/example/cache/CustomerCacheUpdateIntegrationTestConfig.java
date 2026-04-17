@@ -1,12 +1,15 @@
 package com.example.cache;
 
+import com.example.cache.customer.Customer;
+import com.example.cache.customer.CustomerDTO;
+import com.example.cache.customer.repository.CustomerRepository;
+import com.example.cache.customer.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;

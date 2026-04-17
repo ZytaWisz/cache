@@ -1,4 +1,4 @@
-package com.example.cache;
+package com.example.cache.customer;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,9 +1,13 @@
-package com.example.cache;
+package com.example.cache.customer.service;
 
+import com.example.cache.customer.Customer;
+import com.example.cache.customer.CustomerDTO;
+import com.example.cache.customer.repository.CustomerRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +36,7 @@ public class CustomerService {
                 customer.getEmail()
         );
     }
-
+@Transactional
     public Long createCustomer(final String name, final String email){
         Customer customer = new Customer();
         customer.setName(name);

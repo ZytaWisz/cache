@@ -1,5 +1,8 @@
 package com.example.cache;
 
+import com.example.cache.customer.Customer;
+import com.example.cache.customer.repository.CustomerRepository;
+import com.example.cache.customer.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
