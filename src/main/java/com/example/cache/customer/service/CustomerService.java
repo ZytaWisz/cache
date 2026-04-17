@@ -1,10 +1,11 @@
 package com.example.cache.customer.service;
 
-import com.example.cache.customer.Customer;
-import com.example.cache.customer.CustomerDTO;
+import com.example.cache.customer.entity.Customer;
+import com.example.cache.customer.dto.CustomerDTO;
 import com.example.cache.customer.repository.CustomerRepository;
-import org.springframework.cache.annotation.CacheEvict;
+import com.example.cache.event.CustomerEvent;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +17,11 @@ import java.util.Optional;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    private static final String TOPIC = "customer_topic";
-    private final KafkaTemplate<String, String> kafkaTemplate;
-
-    public CustomerService(CustomerRepository customerRepository, KafkaTemplate<String, String> kafkaTemplate) {
+    public CustomerService(CustomerRepository customerRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.customerRepository = customerRepository;
-        this.kafkaTemplate = kafkaTemplate;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Cacheable(cacheNames = "customerCache", key = "#id")
@@ -36,15 +35,15 @@ public class CustomerService {
                 customer.getEmail()
         );
     }
-@Transactional
+
+    @Transactional
     public Long createCustomer(final String name, final String email){
         Customer customer = new Customer();
         customer.setName(name);
         customer.setEmail(email);
         Long customerId = customerRepository.save(customer).getId();
-        
-        // Send Kafka event
-        kafkaTemplate.send(TOPIC, customerId.toString(), String.format("CUSTOMER CREATED: ID: %s, name: %s,email: %s.", customerId, customer.getName(), customer.getEmail()));
+
+        applicationEventPublisher.publishEvent(new CustomerEvent(customer.getId(), customer.getName(),  customer.getEmail()));
 
         return customerId;
     }
@@ -58,7 +57,7 @@ public class CustomerService {
         }
     }
 
-    @CacheEvict(cacheNames = "customerCache", key = "#id")
+    @Transactional
     public CustomerDTO updateCustomer(Long id, String name, String email) {
 
         Customer customer = customerRepository.findById(id)
@@ -68,6 +67,7 @@ public class CustomerService {
         customer.setEmail(email);
 
         customerRepository.save(customer);
+        applicationEventPublisher.publishEvent(new CustomerEvent(customer.getId(), customer.getName(),  customer.getEmail()));
 
         return new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail());
     }

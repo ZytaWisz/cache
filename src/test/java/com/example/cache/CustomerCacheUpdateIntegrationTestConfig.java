@@ -1,7 +1,7 @@
 package com.example.cache;
 
-import com.example.cache.customer.Customer;
-import com.example.cache.customer.CustomerDTO;
+import com.example.cache.customer.entity.Customer;
+import com.example.cache.customer.dto.CustomerDTO;
 import com.example.cache.customer.repository.CustomerRepository;
 import com.example.cache.customer.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,17 +48,17 @@ public class CustomerCacheUpdateIntegrationTestConfig extends RedisIntegrationTe
 
         // verify cache contains value
         Cache.ValueWrapper cached =
-                cacheManager.getCache("customerCache").get(id);
+                Objects.requireNonNull(cacheManager.getCache("customerCache")).get(id);
 
         assertThat(cached).isNotNull();
-        assertThat(((CustomerDTO) cached.get()).name()).isEqualTo("John");
+        assertThat(((CustomerDTO) Objects.requireNonNull(cached.get())).name()).isEqualTo("John");
 
         // update customer
         customerService.updateCustomer(id, "Mike", "mike@test.com");
 
         // cache should be evicted
         Cache.ValueWrapper afterEvict =
-                cacheManager.getCache("customerCache").get(id);
+                Objects.requireNonNull(cacheManager.getCache("customerCache")).get(id);
 
         assertThat(afterEvict).isNull();
 
@@ -67,10 +69,10 @@ public class CustomerCacheUpdateIntegrationTestConfig extends RedisIntegrationTe
 
         // cache should contain updated value
         Cache.ValueWrapper updatedCache =
-                cacheManager.getCache("customerCache").get(id);
+                Objects.requireNonNull(cacheManager.getCache("customerCache")).get(id);
 
         assertThat(updatedCache).isNotNull();
-        assertThat(((CustomerDTO) updatedCache.get()).name())
+        assertThat(((CustomerDTO) Objects.requireNonNull(updatedCache.get())).name())
                 .isEqualTo("Mike");
     }
 }

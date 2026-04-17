@@ -1,6 +1,6 @@
 package com.example.cache.customer.controller;
 
-import com.example.cache.customer.CustomerDTO;
+import com.example.cache.customer.dto.CustomerDTO;
 import com.example.cache.customer.service.CustomerService;
 import com.example.cache.customer.model.CreateCustomerRequest;
 import lombok.RequiredArgsConstructor;

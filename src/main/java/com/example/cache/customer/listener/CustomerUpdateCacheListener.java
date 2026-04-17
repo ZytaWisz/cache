@@ -1,0 +1,22 @@
+package com.example.cache.customer.listener;
+
+import com.example.cache.event.CustomerEvent;
+import org.springframework.cache.CacheManager;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.Objects;
+
+public class CustomerUpdateCacheListener {
+
+    private final CacheManager cacheManager;
+
+    public CustomerUpdateCacheListener(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handle(CustomerEvent event) {
+        Objects.requireNonNull(cacheManager.getCache("customerCache")).evict(event.customerId());
+    }
+}

@@ -1,6 +1,6 @@
 package com.example.cache;
 
-import com.example.cache.customer.Customer;
+import com.example.cache.customer.entity.Customer;
 import com.example.cache.customer.repository.CustomerRepository;
 import com.example.cache.customer.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +11,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.times;
@@ -36,7 +38,7 @@ public class CustomerCacheIntegrationTestConfig extends RedisIntegrationTestConf
     @BeforeEach
     void setup() {
         // ensure clean state
-        cacheManager.getCache("customerCache").clear();
+        Objects.requireNonNull(cacheManager.getCache("customerCache")).clear();
         customerRepository.deleteAll();
     }
 
@@ -54,17 +56,17 @@ public class CustomerCacheIntegrationTestConfig extends RedisIntegrationTestConf
         customerService.getCustomer(id);
 
         // verify cache exists
-        assertThat(cacheManager.getCache("customerCache")
+        assertThat(Objects.requireNonNull(cacheManager.getCache("customerCache"))
                 .get(id)).isNotNull();
 
         // clear L1
-        cacheManager.getCache("customerCache").clear();
+        Objects.requireNonNull(cacheManager.getCache("customerCache")).clear();
 
         // third call — should hit L2, not DB
         customerService.getCustomer(id);
 
         // still cached
-        assertThat(cacheManager.getCache("customerCache")
+        assertThat(Objects.requireNonNull(cacheManager.getCache("customerCache"))
                 .get(id)).isNotNull();
     }
 
@@ -87,7 +89,7 @@ public class CustomerCacheIntegrationTestConfig extends RedisIntegrationTestConf
         verify(customerRepository, times(1)).findById(id);
 
         // clear L1
-        cacheManager.getCache("customerCache").clear();
+        Objects.requireNonNull(cacheManager.getCache("customerCache")).clear();
 
         // Third call -> L2
         customerService.getCustomer(id);

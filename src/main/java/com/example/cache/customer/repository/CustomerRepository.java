@@ -1,6 +1,6 @@
 package com.example.cache.customer.repository;
 
-import com.example.cache.customer.Customer;
+import com.example.cache.customer.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
