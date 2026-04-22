@@ -24,7 +24,6 @@ public class OutboxEvent implements Creatable {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(50)")
     private AggregateType aggregateType;
 
     private Long aggregateId;
