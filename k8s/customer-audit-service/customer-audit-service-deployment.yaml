@@ -1,29 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cache-app
-  namespace: cache-app
-  labels:
-    app: cache-app
+  name: audit-service
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: cache-app
+      app: audit-service
   template:
     metadata:
       labels:
-        app: cache-app
+        app: audit-service
     spec:
       containers:
-        - name: cache-app
-          image: cache-app:1.0.2        # <-- replace with your actual image name/tag
-          imagePullPolicy: Never  # use Always if pulling from a remote registry
-          ports:
-            - containerPort: 8080
-          envFrom:
+        - name: app
+          image: audit-service:1.0.0
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
             - configMapRef:
-                name: cache-app-config
+                name: customer-audit-service-config
+            - secretRef:
+                name: customer-audit-service-secret
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -44,3 +41,19 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: audit-service
+  namespace: cache-app
+  labels:
+    app: audit-service
+spec:
+  selector:
+    app: audit-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: NodePort

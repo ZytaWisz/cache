@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-mysql
+  labels:
+    app: customer-mysql
+    service: customer-service
+  namespace: cache-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-mysql
+  template:
+    metadata:
+      labels:
+        app: customer-mysql
+        service: customer-service
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: customer_db
+          args:
+            - "--server-id=1"
+            - "--log-bin=mysql-bin"
+            - "--binlog-format=ROW"
+            - "--binlog-row-image=FULL"
+      readinessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
+        initialDelaySeconds: 10
+        periodSeconds: 5
+
+    livenessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD
+      initialDelaySeconds: 60
+      periodSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-mysql
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: customer-mysql
+  type: ClusterIP
+

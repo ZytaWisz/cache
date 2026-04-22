@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-audit-service-config
+data:
+  SPRING_PROFILES_ACTIVE: "k8s"
+  data:
+    SPRING_PROFILES_ACTIVE: "k8s"
+    SPRING_DATASOURCE_URL: "jdbc:postgresql://audit-postgres:5432/audit_db"
+    SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"

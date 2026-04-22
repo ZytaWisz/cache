@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/audit-db
+    username: postgres
+    password: postgres
+
+  app:
+    kafka:
+      enabled: false

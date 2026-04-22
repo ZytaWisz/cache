@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: customer-redis
   namespace: cache-app
   labels:
-    app: redis
+    app: customer-redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app: customer-redis
   template:
     metadata:
       labels:
-        app: redis
+        app: customer-redis
     spec:
       containers:
         - name: redis
@@ -27,3 +27,32 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "100m"
+      livenessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - redis-cli ping
+
+      readinessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - redis-cli ping
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-redis
+  namespace: cache-app
+  labels:
+    app: customer-redis
+spec:
+  selector:
+    app: customer-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+  type: ClusterIP
