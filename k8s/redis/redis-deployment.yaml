@@ -20,6 +20,7 @@ spec:
           image: redis:7-alpine
           ports:
             - containerPort: 6379
+
           resources:
             requests:
               memory: "64Mi"
@@ -27,19 +28,24 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "100m"
-      livenessProbe:
-        exec:
-          command:
-            - sh
-            - -c
-            - redis-cli ping
 
-      readinessProbe:
-        exec:
-          command:
-            - sh
-            - -c
-            - redis-cli ping
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli ping
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli ping
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 apiVersion: v1

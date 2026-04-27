@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-grant-debezium
+  namespace: cache-app
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mysql-grant
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_ROOT_PASSWORD
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+
+              echo "Waiting for MySQL..."
+
+              until mysqladmin ping -h customer-mysql -uroot -p${MYSQL_ROOT_PASSWORD} --silent; do
+                sleep 5
+              done
+
+              echo "MySQL is ready. Granting privileges..."
+
+              mysql -h customer-mysql -uroot -p${MYSQL_ROOT_PASSWORD} <<EOF
+              CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'password';
+
+              GRANT SELECT, RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT, LOCK TABLES 
+              ON *.* TO 'user'@'%';
+
+              FLUSH PRIVILEGES;
+              EOF
+
+              echo "Done."

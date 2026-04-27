@@ -22,5 +22,8 @@
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <finalName>app</finalName>
+    </build>
 
 </project>

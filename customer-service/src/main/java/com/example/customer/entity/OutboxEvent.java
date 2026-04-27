@@ -4,6 +4,7 @@ import com.example.customer.enums.AggregateType;
 import com.example.customer.enums.CustomerEventType;
 import com.example.customer.listener.AuditListener;
 import com.example.customer.model.Creatable;
+import com.example.customer.model.EventIdGenerator;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditListener.class)
-public class OutboxEvent implements Creatable {
+public class OutboxEvent implements Creatable, EventIdGenerator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)

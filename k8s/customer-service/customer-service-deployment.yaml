@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: customer-service
+  namespace: cache-app
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: customer-service
@@ -14,14 +16,16 @@ spec:
       containers:
         - name: app
           image: customer-service:1.0.0
-          imagePullPolicy: Never  # use Always if pulling from a remote registry
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
-          env:
+
+          envFrom:
             - configMapRef:
                 name: customer-service-config
             - secretRef:
                 name: customer-service-secret
+
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -29,12 +33,14 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 5
+
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: 8080
             initialDelaySeconds: 90
             periodSeconds: 15
+
           resources:
             requests:
               memory: "256Mi"
@@ -58,7 +64,7 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 30001
   type: NodePort
-
 
 

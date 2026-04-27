@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-topics-init
+  namespace: cache-app
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: kafka-topics-init
+          image: apache/kafka:3.7.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              BOOTSTRAP="kafka:9092"
+
+              echo "Waiting for Kafka..."
+
+              until /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server $BOOTSTRAP >/dev/null 2>&1; do
+                echo "Kafka not ready..."
+                sleep 5
+              done
+
+              echo "Kafka is ready"
+
+              echo "Creating topics..."
+
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP --create --if-not-exists --topic connect-configs --partitions 1 --replication-factor 1 --config cleanup.policy=compact
+
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP --create --if-not-exists --topic connect-offsets --partitions 1 --replication-factor 1 --config cleanup.policy=compact
+
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP --create --if-not-exists --topic connect-status --partitions 1 --replication-factor 1 --config cleanup.policy=compact
+
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP --create --if-not-exists --topic customer_topic --partitions 1 --replication-factor 1
+
+              echo "Topics created:"
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP --list

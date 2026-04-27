@@ -50,18 +50,31 @@ public class CustomerService {
         customer.setName(name);
         customer.setEmail(email);
 
-        Long customerId = customerRepository.save(customer).getId();
-        CustomerEvent event=new CustomerEvent(CustomerEventType.CREATED,customer.getId(), customer.getName(),  customer.getEmail());
-//        applicationEventPublisher.publishEvent(event);
+         customerRepository.save(customer);
+
+        CustomerEvent event=new CustomerEvent(
+                CustomerEventType.CREATED,
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt());
+
+
         outboxRepository.save(createOutboxEvent(event));
 
-        return customerId;
+        return customer.getId();
     }
 
     public CustomerDTO getCustomerByEmail(String email){
         Optional<Customer> customer=customerRepository.findCustomerByEmail(email);
         if(customer.isPresent()){
-            return new CustomerDTO(customer.get().getId(), customer.get().getName(),customer.get().getEmail(),  customer.get().getCreatedAt(), customer.get().getUpdatedAt());
+            return new CustomerDTO(
+                    customer.get().getId(),
+                    customer.get().getName(),
+                    customer.get().getEmail(),
+                    customer.get().getCreatedAt(),
+                    customer.get().getUpdatedAt());
         }else{
             throw new RuntimeException("Customer not found");
         }
@@ -78,18 +91,35 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        CustomerEvent event=new CustomerEvent(CustomerEventType.UPDATED,customer.getId(), customer.getName(),  customer.getEmail());
+        CustomerEvent event=new CustomerEvent(
+                CustomerEventType.UPDATED,
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt());
+
         // sending event to CustomerCacheListener
         applicationEventPublisher.publishEvent(event);
 
         outboxRepository.save(createOutboxEvent(event));
 
-        return new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail(), customer.getCreatedAt(), customer.getUpdatedAt());
+        return new CustomerDTO(
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt());
     }
 
     public List<CustomerDTO> getCustomers() {
         return customerRepository.findAll().stream()
-                .map(customer -> new CustomerDTO(customer.getId(), customer.getName(), customer.getEmail(), customer.getCreatedAt(), customer.getUpdatedAt()))
+                .map(customer -> new CustomerDTO(
+                        customer.getId(),
+                        customer.getName(),
+                        customer.getEmail(),
+                        customer.getCreatedAt(),
+                        customer.getUpdatedAt()))
                 .toList();
     }
 

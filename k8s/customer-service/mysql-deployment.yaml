@@ -2,10 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: customer-mysql
+  namespace: cache-app
   labels:
     app: customer-mysql
-    service: customer-service
-  namespace: cache-app
 spec:
   replicas: 1
   selector:
@@ -15,40 +14,67 @@ spec:
     metadata:
       labels:
         app: customer-mysql
-        service: customer-service
     spec:
       containers:
         - name: mysql
           image: mysql:8.0
           ports:
             - containerPort: 3306
+
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_ROOT_PASSWORD
+
             - name: MYSQL_DATABASE
               value: customer_db
+
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_USERNAME
+
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_PASSWORD
+
           args:
             - "--server-id=1"
             - "--log-bin=mysql-bin"
             - "--binlog-format=ROW"
             - "--binlog-row-image=FULL"
-      readinessProbe:
-        exec:
-          command:
-            - sh
-            - -c
-            - mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
-        initialDelaySeconds: 10
-        periodSeconds: 5
 
-    livenessProbe:
-      exec:
-        command:
-          - sh
-          - -c
-          - mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD
-      initialDelaySeconds: 60
-      periodSeconds: 10
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD
+            initialDelaySeconds: 60
+            periodSeconds: 10
+
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: customer-mysql-pvc
 
 ---
 
@@ -56,10 +82,25 @@ apiVersion: v1
 kind: Service
 metadata:
   name: customer-mysql
+  namespace: cache-app
 spec:
-  ports:
-    - port: 3306
   selector:
     app: customer-mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
   type: ClusterIP
 
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: customer-mysql-pvc
+  namespace: cache-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi

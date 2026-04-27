@@ -22,5 +22,8 @@
         <artifactId>postgresql</artifactId>
     </dependency>
     </dependencies>
+    <build>
+        <finalName>app</finalName>
+    </build>
 
 </project>

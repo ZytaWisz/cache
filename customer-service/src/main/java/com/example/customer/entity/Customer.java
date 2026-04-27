@@ -1,5 +1,8 @@
 package com.example.customer.entity;
 
+import com.example.customer.listener.AuditListener;
+import com.example.customer.model.Creatable;
+import com.example.customer.model.Updatable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +16,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Customer {
+@AllArgsConstructor
+@EntityListeners(AuditListener.class)
+public class Customer implements Creatable, Updatable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)

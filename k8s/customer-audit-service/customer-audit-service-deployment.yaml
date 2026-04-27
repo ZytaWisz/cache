@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: audit-service
+  namespace: cache-app
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: audit-service
@@ -14,13 +16,20 @@ spec:
       containers:
         - name: app
           image: audit-service:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: k8s
+
+          envFrom:
             - configMapRef:
                 name: customer-audit-service-config
             - secretRef:
                 name: customer-audit-service-secret
+
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -28,12 +37,14 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 5
+
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: 8080
             initialDelaySeconds: 90
             periodSeconds: 15
+
           resources:
             requests:
               memory: "256Mi"
@@ -41,6 +52,7 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+
 ---
 
 apiVersion: v1
@@ -56,4 +68,5 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 30002
   type: NodePort
