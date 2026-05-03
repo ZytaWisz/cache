@@ -16,7 +16,6 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 public class CustomerService {
 
@@ -45,7 +44,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public Long createCustomer(final String name, final String email){
+    public void createCustomer(final String name, final String email){
         Customer customer = new Customer();
         customer.setName(name);
         customer.setEmail(email);
@@ -60,10 +59,7 @@ public class CustomerService {
                 customer.getCreatedAt(),
                 customer.getUpdatedAt());
 
-
         outboxRepository.save(createOutboxEvent(event));
-
-        return customer.getId();
     }
 
     public CustomerDTO getCustomerByEmail(String email){
@@ -89,7 +85,8 @@ public class CustomerService {
         customer.setName(name);
         customer.setEmail(email);
 
-        customerRepository.save(customer);
+        customerRepository.saveAndFlush(customer);
+
 
         CustomerEvent event=new CustomerEvent(
                 CustomerEventType.UPDATED,
@@ -124,12 +121,11 @@ public class CustomerService {
     }
 
     private OutboxEvent createOutboxEvent(CustomerEvent customerEvent){
-      return  OutboxEvent.builder()
-                .aggregateType(AggregateType.CUSTOMER)
-                .aggregateId(customerEvent.customerId())
-                .eventType(customerEvent.customerEventType())
-                .payload(toJson(customerEvent))
-                .build();
+      return new OutboxEvent(
+                AggregateType.CUSTOMER,
+                customerEvent.customerId(),
+                customerEvent.customerEventType(),
+                toJson(customerEvent));
     }
 
     private String toJson(Object obj) {

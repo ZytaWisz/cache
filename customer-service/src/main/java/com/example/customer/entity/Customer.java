@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EntityListeners(AuditListener.class)
 public class Customer implements Creatable, Updatable {
     @Id
@@ -38,10 +37,18 @@ public class Customer implements Creatable, Updatable {
     private LocalDateTime updatedAt;
 
     @Version
+    @Setter(AccessLevel.NONE)
     private Long version;
 
     public Customer(String name, String email) {
         this.name = name;
         this.email = email;
+    }
+
+    public Customer(String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.name = name;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

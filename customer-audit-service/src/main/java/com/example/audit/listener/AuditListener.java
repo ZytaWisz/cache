@@ -10,7 +10,7 @@ public class AuditListener {
     public void prePersist(Object entity){
         if(entity instanceof Auditable auditable){
             LocalDateTime now = LocalDateTime.now();
-            auditable.setConsumedAt(now);
+            auditable.setEventConsumedAt(now);
         }
     }
 }

@@ -6,35 +6,45 @@ metadata:
 data:
   connector.json: |
     {
-        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-        "tasks.max": "1",
+      "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+      "tasks.max": "1",
 
-        "database.hostname": "customer-mysql",
-        "database.port": "3306",
-        "database.user": "${DB_USERNAME}",
-        "database.password": "${DB_PASSWORD}",
+      "database.hostname": "customer-mysql",
+      "database.port": "3306",
+      "database.user": "${DB_USERNAME}",
+      "database.password": "${DB_PASSWORD}",
 
-        "database.server.id": "184054",
-        "topic.prefix": "customerdb",
+      "database.server.id": "184054",
+      "topic.prefix": "customerdb",
+      "database.include.list": "customer_db",
 
-        "table.include.list": "customer_db.outbox_event",
+      "table.include.list": "customer_db.outbox_event",
+      "include.schema.changes": "false",
+      "tombstones.on.delete": "false",
 
-        "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-        "schema.history.internal.kafka.topic": "schemahistory.customer",
+      "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+      "schema.history.internal.kafka.topic": "schemahistory.customer",
 
-        "snapshot.mode": "initial",
+      "snapshot.mode": "initial",
 
-        "transforms": "outbox",
-        "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+      "transforms": "outbox",
+      "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
 
-        "transforms.outbox.route.by.field": "aggregate_type",
-        "transforms.outbox.route.topic.replacement": "customer_topic",
+      "transforms.outbox.route.by.field": "aggregate_type",
+      "transforms.outbox.route.topic.replacement": "customer_topic",
 
-        "transforms.outbox.table.field.event.id": "event_id",
-        "transforms.outbox.table.field.event.key": "aggregate_id",
-        "transforms.outbox.table.field.event.payload": "payload",
+      "transforms.outbox.table.field.event.id": "event_id",
+      "transforms.outbox.table.field.event.key": "aggregate_id",
+      "transforms.outbox.table.field.event.payload": "payload",
+      "transforms.outbox.table.expand.json.payload": "true",
 
-        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-        "value.converter.schemas.enable": "false"
+      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "false",
+
+      "predicates": "isOutboxTable",
+      "predicates.isOutboxTable.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+      "predicates.isOutboxTable.pattern": "customerdb\\.customer_db\\.outbox_event",
+
+      "transforms.outbox.predicate": "isOutboxTable"
     }

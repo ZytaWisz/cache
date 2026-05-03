@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @EntityListeners(AuditListener.class)
 public class OutboxEvent implements Creatable, EventIdGenerator {
     @Id
@@ -38,4 +36,18 @@ public class OutboxEvent implements Creatable, EventIdGenerator {
     private String payload;
 
     private LocalDateTime createdAt;
+
+    @Version
+    @Setter(AccessLevel.NONE)
+    private Long version;
+
+    public OutboxEvent(AggregateType aggregateType,
+                       Long aggregateId,
+                       CustomerEventType eventType,
+                       String payload) {
+        this.aggregateType = aggregateType;
+        this.aggregateId = aggregateId;
+        this.eventType = eventType;
+        this.payload = payload;
+    }
 }

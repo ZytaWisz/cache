@@ -53,6 +53,14 @@ spec:
             - name: mysql-storage
               mountPath: /var/lib/mysql
 
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "500m"
+
           readinessProbe:
             exec:
               command:

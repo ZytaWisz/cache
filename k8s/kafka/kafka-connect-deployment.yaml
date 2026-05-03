@@ -15,34 +15,48 @@ spec:
     spec:
       containers:
         - name: kafka-connect
-          image: debezium/connect:2.6
+          image: quay.io/debezium/connect:3.4
           ports:
             - containerPort: 8083
 
           env:
             - name: BOOTSTRAP_SERVERS
-              value: kafka:9092
+              value: "kafka:9092"
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms256m -Xmx512m"
+
             - name: GROUP_ID
-              value: connect-cluster
+              value: "connect-cluster"
+
             - name: CONFIG_STORAGE_TOPIC
-              value: connect-configs
+              value: "connect-configs"
+
             - name: OFFSET_STORAGE_TOPIC
-              value: connect-offsets
+              value: "connect-offsets"
+
             - name: STATUS_STORAGE_TOPIC
-              value: connect-status
+              value: "connect-status"
+
             - name: CONFIG_STORAGE_REPLICATION_FACTOR
               value: "1"
+
             - name: OFFSET_STORAGE_REPLICATION_FACTOR
               value: "1"
+
             - name: STATUS_STORAGE_REPLICATION_FACTOR
               value: "1"
 
             - name: KEY_CONVERTER
-              value: org.apache.kafka.connect.storage.StringConverter
+              value: "org.apache.kafka.connect.storage.StringConverter"
+
             - name: VALUE_CONVERTER
-              value: org.apache.kafka.connect.json.JsonConverter
+              value: "org.apache.kafka.connect.json.JsonConverter"
+
             - name: VALUE_CONVERTER_SCHEMAS_ENABLE
               value: "false"
+
+            - name: REST_ADVERTISED_HOST_NAME
+              value: "kafka-connect"
 
             - name: DB_USERNAME
               valueFrom:
@@ -56,19 +70,29 @@ spec:
                   name: debezium-connector-secret
                   key: DB_PASSWORD
 
+          resources:
+            requests:
+              memory: "768Mi"
+              cpu: "200m"
+            limits:
+              memory: "1.5Gi"
+              cpu: "750m"
+
           readinessProbe:
             httpGet:
               path: /
               port: 8083
-            initialDelaySeconds: 20
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 10
 
           livenessProbe:
             httpGet:
               path: /
               port: 8083
-            initialDelaySeconds: 40
-            periodSeconds: 15
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            failureThreshold: 10
 
 ---
 apiVersion: v1

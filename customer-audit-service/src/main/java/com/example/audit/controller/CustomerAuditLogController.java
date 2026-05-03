@@ -15,7 +15,7 @@ public class CustomerAuditLogController {
 
     private final CustomerAuditLogService service;
 
-    @GetMapping("/customers")
+    @GetMapping("/customer/logs")
     public List<ConsumerAuditLogDto> getCustomerLogs() {
         return service.getConsumerAuditLogs();
     }

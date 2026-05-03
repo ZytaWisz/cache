@@ -1,17 +1,17 @@
 package com.example.audit.service;
 
 import com.example.audit.dto.ConsumerAuditLogDto;
-import com.example.audit.dto.OutboxEventDto;
+import com.example.audit.dto.CustomerEventDto;
 import com.example.audit.entity.CustomerAuditLog;
 import com.example.audit.repository.CustomerAuditRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
+@Slf4j
 @Service
 public class CustomerAuditLogService {
     private final ObjectMapper objectMapper;
@@ -23,20 +23,22 @@ public class CustomerAuditLogService {
     }
 
     @Transactional
-    @KafkaListener(topics = "customer_topic")
+    @KafkaListener(topics = "customer_topic", groupId = "customer-group")
     public void listen(final String message) {
         try {
-            OutboxEventDto event = objectMapper.readValue(message, OutboxEventDto.class);
+            log.info("Receive message from Kafka topic: {}", message);
 
-            CustomerAuditLog audit = CustomerAuditLog.builder()
-                    .eventId(event.eventId())
-                    .aggregateType(event.aggregateType())
-                    .aggregateId(event.aggregateId())
-                    .eventType(event.eventType())
-                    .payload(event.payload())
-                    .eventCreatedAt(event.createdAt())
-                    .consumedAt(LocalDateTime.now())
-                    .build();
+            CustomerEventDto event = objectMapper.readValue(message, CustomerEventDto.class);
+
+            log.info("Kafka message deserialized to CustomerEventDto: {}", event);
+
+            CustomerAuditLog audit = new CustomerAuditLog(
+                    event.customerEventType(),
+                    event.customerId(),
+                    event.name(),
+                    event.email(),
+                    event.createdAt(),
+                    event.updatedAt());
 
             repository.save(audit);
 
@@ -55,13 +57,13 @@ public class CustomerAuditLogService {
     private ConsumerAuditLogDto toDto(CustomerAuditLog log) {
         return new ConsumerAuditLogDto(
                 log.getId(),
-                log.getEventId(),
-                log.getAggregateType(),
-                log.getAggregateId(),
-                log.getEventType(),
-                log.getPayload(),
-                log.getEventCreatedAt(),
-                log.getConsumedAt()
+                log.getCustomerId(),
+                log.getCustomerEventType(),
+                log.getCustomerName(),
+                log.getCustomerEmail(),
+                log.getCustomerCreatedAt(),
+                log.getCustomerUpdatedAt(),
+                log.getEventConsumedAt()
         );
     }
 }

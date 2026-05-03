@@ -1,5 +1,8 @@
 package com.example.audit.entity;
 
+import com.example.audit.enums.CustomerEventType;
+import com.example.audit.listener.AuditListener;
+import com.example.audit.model.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,26 +13,43 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class CustomerAuditLog {
+@EntityListeners(AuditListener.class)
+public class CustomerAuditLog implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String eventId;
+    @Enumerated(EnumType.STRING)
+    private CustomerEventType customerEventType;
 
-    private String aggregateType;
+    private Long customerId;
 
-    private Long aggregateId;
+    private String customerName;
 
-    private String eventType;
+    private String customerEmail;
 
-    @Column(columnDefinition = "jsonb")
-    private String payload;
+    private LocalDateTime customerCreatedAt;
 
-    private LocalDateTime eventCreatedAt;
+    private LocalDateTime customerUpdatedAt;
 
-    private LocalDateTime consumedAt;
+    private LocalDateTime eventConsumedAt;
+
+    @Version
+    @Setter(AccessLevel.NONE)
+    private Long version;
+
+    public CustomerAuditLog(CustomerEventType customerEventType,
+                            Long customerId,
+                            String customerName,
+                            String customerEmail,
+                            LocalDateTime customerCreatedAt,
+                            LocalDateTime customerUpdatedAt) {
+        this.customerEventType = customerEventType;
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.customerEmail = customerEmail;
+        this.customerCreatedAt = customerCreatedAt;
+        this.customerUpdatedAt = customerUpdatedAt;
+    }
 }

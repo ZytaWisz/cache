@@ -5,5 +5,5 @@ metadata:
   namespace: cache-app
 data:
   SPRING_PROFILES_ACTIVE: "k8s"
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://audit-postgres:5432/audit_db"
+  DB_URL: "jdbc:postgresql://audit-postgres:5432/audit_db"
   SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"

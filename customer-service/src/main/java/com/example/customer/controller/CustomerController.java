@@ -4,6 +4,7 @@ import com.example.customer.dto.CustomerDTO;
 import com.example.customer.service.CustomerService;
 import com.example.customer.model.CustomerRequestBody;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,15 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/customer")
-    public Long createCustomer(@RequestBody CustomerRequestBody customerRequestBody) {
-        return customerService.createCustomer(customerRequestBody.getName(), customerRequestBody.getEmail());
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCustomer(@RequestBody CustomerRequestBody customerRequestBody) {
+         customerService.createCustomer(customerRequestBody.getName(), customerRequestBody.getEmail());
     }
 
-    @PostMapping("/customer/{id}")
-    public CustomerDTO updateCustomer(@PathVariable final String id,@RequestBody CustomerRequestBody customerRequestBody) {
+    @PutMapping("/customer/{id}")
+    public CustomerDTO updateCustomer(
+            @PathVariable final String id,
+            @RequestBody CustomerRequestBody customerRequestBody) {
         return customerService.updateCustomer(Long.valueOf(id), customerRequestBody.getName(), customerRequestBody.getEmail());
     }
 
