@@ -21,8 +21,8 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDTO createCustomer(@RequestBody @Valid CustomerRequestBody customerRequestBody) {
          return customerService.createCustomer(
-                 customerRequestBody.getName(),
-                 customerRequestBody.getEmail());
+                 customerRequestBody.name(),
+                 customerRequestBody.email());
     }
 
     @PutMapping("/customer/{id}")
@@ -32,8 +32,8 @@ public class CustomerController {
 
         return customerService.updateCustomer(
                 Long.valueOf(id),
-                customerRequestBody.getName(),
-                customerRequestBody.getEmail());
+                customerRequestBody.name(),
+                customerRequestBody.email());
     }
 
     @GetMapping("/customer/{id}")
