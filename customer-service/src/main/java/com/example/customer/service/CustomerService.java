@@ -9,7 +9,7 @@ import com.example.customer.events.CustomerEvent;
 import com.example.customer.exceptions.CustomerNotFoundException;
 import com.example.customer.repository.CustomerRepository;
 import com.example.customer.repository.OutboxRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;

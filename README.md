@@ -188,8 +188,11 @@ kubectl apply -f k8s/namespace.yaml
 # Redis
 kubectl apply -f k8s/redis/
 
-# Kafka + Kafka Connect + Kafka UI
+# Kafka + Kafka Connect
 kubectl apply -f k8s/kafka/
+
+# Kafka-ui
+kubectl apply -f k8s/kafka-ui/
 
 # MySQL (for customer-service)
 kubectl apply -f k8s/customer-service/mysql-deployment.yaml
