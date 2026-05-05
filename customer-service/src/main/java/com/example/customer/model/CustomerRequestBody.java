@@ -1,16 +1,8 @@
 package com.example.customer.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
-@Setter
-@Getter
-public class CustomerRequestBody {
-    String name;
-    String email;
 
-    public CustomerRequestBody(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
+public record CustomerRequestBody(@NotBlank String name, @Email String email) {
 }

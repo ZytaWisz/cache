@@ -6,45 +6,36 @@ import com.example.customer.entity.OutboxEvent;
 import com.example.customer.enums.AggregateType;
 import com.example.customer.enums.CustomerEventType;
 import com.example.customer.events.CustomerEvent;
+import com.example.customer.exceptions.CustomerNotFoundException;
 import com.example.customer.repository.CustomerRepository;
 import com.example.customer.repository.OutboxRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
-import java.util.Optional;
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final OutboxRepository outboxRepository;
-
-    public CustomerService(CustomerRepository customerRepository, ApplicationEventPublisher applicationEventPublisher, OutboxRepository outboxRepository) {
-        this.customerRepository = customerRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.outboxRepository = outboxRepository;
-    }
+    private final ObjectMapper objectMapper;
 
     @Cacheable(cacheNames = "customerCache", key = "#id")
     public CustomerDTO getCustomer(Long id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() ->  new CustomerNotFoundException(id));
 
-        return new CustomerDTO(
-                customer.getId(),
-                customer.getName(),
-                customer.getEmail(),
-                customer.getCreatedAt(),
-                customer.getUpdatedAt()
-        );
+        return toCustomerDto(customer);
     }
 
     @Transactional
-    public void createCustomer(final String name, final String email){
+    public CustomerDTO createCustomer(final String name, final String email){
         Customer customer = new Customer();
         customer.setName(name);
         customer.setEmail(email);
@@ -60,27 +51,15 @@ public class CustomerService {
                 customer.getUpdatedAt());
 
         outboxRepository.save(createOutboxEvent(event));
-    }
 
-    public CustomerDTO getCustomerByEmail(String email){
-        Optional<Customer> customer=customerRepository.findCustomerByEmail(email);
-        if(customer.isPresent()){
-            return new CustomerDTO(
-                    customer.get().getId(),
-                    customer.get().getName(),
-                    customer.get().getEmail(),
-                    customer.get().getCreatedAt(),
-                    customer.get().getUpdatedAt());
-        }else{
-            throw new RuntimeException("Customer not found");
-        }
+        return toCustomerDto(customer);
     }
 
     @Transactional
     public CustomerDTO updateCustomer(Long id, String name, String email) {
 
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() ->  new CustomerNotFoundException(id));
 
         customer.setName(name);
         customer.setEmail(email);
@@ -101,22 +80,12 @@ public class CustomerService {
 
         outboxRepository.save(createOutboxEvent(event));
 
-        return new CustomerDTO(
-                customer.getId(),
-                customer.getName(),
-                customer.getEmail(),
-                customer.getCreatedAt(),
-                customer.getUpdatedAt());
+        return toCustomerDto(customer);
     }
 
     public List<CustomerDTO> getCustomers() {
         return customerRepository.findAll().stream()
-                .map(customer -> new CustomerDTO(
-                        customer.getId(),
-                        customer.getName(),
-                        customer.getEmail(),
-                        customer.getCreatedAt(),
-                        customer.getUpdatedAt()))
+                .map(this::toCustomerDto)
                 .toList();
     }
 
@@ -129,11 +98,20 @@ public class CustomerService {
     }
 
     private String toJson(Object obj) {
-        ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.writeValueAsString(obj);
+            return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize event", e);
         }
+    }
+
+    private CustomerDTO toCustomerDto(Customer customer) {
+        return new CustomerDTO(
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt()
+        );
     }
 }

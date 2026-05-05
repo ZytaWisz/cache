@@ -3,6 +3,7 @@ package com.example.customer.controller;
 import com.example.customer.dto.CustomerDTO;
 import com.example.customer.service.CustomerService;
 import com.example.customer.model.CustomerRequestBody;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +19,26 @@ public class CustomerController {
 
     @PostMapping("/customer")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCustomer(@RequestBody CustomerRequestBody customerRequestBody) {
-         customerService.createCustomer(customerRequestBody.getName(), customerRequestBody.getEmail());
+    public CustomerDTO createCustomer(@RequestBody @Valid CustomerRequestBody customerRequestBody) {
+         return customerService.createCustomer(
+                 customerRequestBody.getName(),
+                 customerRequestBody.getEmail());
     }
 
     @PutMapping("/customer/{id}")
     public CustomerDTO updateCustomer(
             @PathVariable final String id,
-            @RequestBody CustomerRequestBody customerRequestBody) {
-        return customerService.updateCustomer(Long.valueOf(id), customerRequestBody.getName(), customerRequestBody.getEmail());
+            @RequestBody @Valid CustomerRequestBody customerRequestBody) {
+
+        return customerService.updateCustomer(
+                Long.valueOf(id),
+                customerRequestBody.getName(),
+                customerRequestBody.getEmail());
     }
 
     @GetMapping("/customer/{id}")
-    public CustomerDTO getCustomer(@PathVariable final String id) {
-        return customerService.getCustomer(Long.valueOf(id));
+    public CustomerDTO getCustomer(@PathVariable final Long id) {
+        return customerService.getCustomer(id);
     }
 
     @GetMapping("/customers")

@@ -87,19 +87,20 @@ public class TwoLevelCache implements Cache {
     public void put(Object key, @Nullable Object value) {
         redisCache.put(key, value);  // write to Redis (source of truth)
         caffeineCache.put(key, value);  // update local cache
-
     }
 
     @Override
     public void evict(Object key) {
-        caffeineCache.evict(key);
         redisCache.evict(key);
+        caffeineCache.evict(key);
     }
 
     @Override
     public void clear() {
         caffeineCache.clear();
         redisCache.clear();
-
     }
+
+    //TODO: read the differences between write-through cache (both levels equivalent)
+    // and read-through + write-through cache and how to implement it correctly.
 }
