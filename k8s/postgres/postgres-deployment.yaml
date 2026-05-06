@@ -1,10 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: audit-postgres
   namespace: cache-app
   labels:
     app: audit-postgres
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   replicas: 1
   selector:

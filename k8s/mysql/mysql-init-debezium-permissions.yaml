@@ -3,20 +3,19 @@ kind: Job
 metadata:
   name: mysql-grant-debezium
   namespace: cache-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   backoffLimit: 3
+
   template:
     spec:
       restartPolicy: Never
+
       containers:
         - name: mysql-grant
           image: mysql:8.0
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: customer-service-secret
-                  key: DB_ROOT_PASSWORD
+
           command:
             - /bin/sh
             - -c
@@ -41,3 +40,10 @@ spec:
               EOF
 
               echo "Done."
+
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_ROOT_PASSWORD

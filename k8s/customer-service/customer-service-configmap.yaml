@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: customer-service-config
   namespace: cache-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 data:
   SPRING_PROFILES_ACTIVE: "k8s"
   DB_URL: "jdbc:mysql://customer-mysql:3306/customer_db"

@@ -3,6 +3,8 @@ kind: Job
 metadata:
   name: kafka-topics-init
   namespace: cache-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
 spec:
   backoffLimit: 3
   template:

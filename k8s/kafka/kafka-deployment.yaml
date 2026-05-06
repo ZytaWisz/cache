@@ -5,6 +5,8 @@ metadata:
   namespace: cache-app
   labels:
     app: kafka
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   replicas: 1
   selector:
