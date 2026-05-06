@@ -11,6 +11,8 @@ spec:
     repoURL: https://github.com/ZytaWisz/cache.git
     targetRevision: HEAD
     path: k8s
+    directory:
+      recurse: true
 
   destination:
     server: https://kubernetes.default.svc
@@ -18,8 +20,11 @@ spec:
 
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
+      prune: true        # Automatically delete resources that were removed from Git (keeps cluster in sync with repo)
+      selfHeal: true     # Automatically re-sync if something in the cluster drifts from the desired state.
+                         #fixes any manual changes made directly in the cluster (no manual intervention needed)
 
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=true                 # Creates the namespace automatically if it doesn't exist (no need to create it manually)
+      - ApplyOutOfSyncOnly=true              # Applies changes only to modified resources (avoids unnecessary manual restarts or re-applies)
+      - PrunePropagationPolicy=foreground    # Ensures resources are deleted in the correct order (no need to manually handle dependencies)
