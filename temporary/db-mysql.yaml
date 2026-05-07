@@ -7,19 +7,28 @@ metadata:
     app: customer-mysql
   annotations:
     argocd.argoproj.io/sync-wave: "2"
+
 spec:
+  serviceName: customer-mysql
+  # Added serviceName because StatefulSet requires a stable network identity
+  # for predictable pod DNS names and stable storage mapping.
+
   replicas: 1
+
   selector:
     matchLabels:
       app: customer-mysql
+
   template:
     metadata:
       labels:
         app: customer-mysql
+
     spec:
       containers:
         - name: mysql
           image: mysql:8.0
+
           ports:
             - containerPort: 3306
 
@@ -59,6 +68,7 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "200m"
+
             limits:
               memory: "768Mi"
               cpu: "500m"
@@ -69,7 +79,10 @@ spec:
                 - sh
                 - -c
                 - mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
-            initialDelaySeconds: 10
+
+            initialDelaySeconds: 20
+            # Increased delay because MySQL startup can take longer with persistent storage.
+
             periodSeconds: 5
 
           livenessProbe:
@@ -78,39 +91,43 @@ spec:
                 - sh
                 - -c
                 - mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD
+
             initialDelaySeconds: 60
             periodSeconds: 10
 
-      volumes:
-        - name: mysql-storage
-          persistentVolumeClaim:
-            claimName: customer-mysql-pvc
+  volumeClaimTemplates:
+    # Replaced standalone PVC with volumeClaimTemplates.
+    # This is the recommended StatefulSet approach because each pod
+    # gets its own dedicated persistent storage automatically.
+
+    - metadata:
+        name: mysql-storage
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 256Mi
 
 ---
 
 apiVersion: v1
 kind: Service
+
 metadata:
   name: customer-mysql
   namespace: cache-app
+
 spec:
+  clusterIP: None
+  # Changed to headless service.
+  # StatefulSets should use a headless service for stable DNS identities.
+
   selector:
     app: customer-mysql
+
   ports:
     - port: 3306
       targetPort: 3306
-  type: ClusterIP
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: customer-mysql-pvc
-  namespace: cache-app
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 256Mi
