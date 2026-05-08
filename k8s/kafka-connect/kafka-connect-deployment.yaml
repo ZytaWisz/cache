@@ -24,6 +24,7 @@ spec:
           env:
             - name: BOOTSTRAP_SERVERS
               value: "kafka:9092"
+
             - name: KAFKA_HEAP_OPTS
               value: "-Xms256m -Xmx512m"
 
