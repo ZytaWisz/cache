@@ -129,6 +129,11 @@ spec:
   clusterIP: None
   # Changed to headless service.
   # StatefulSets should use a headless service for stable DNS identities.
+
+  # REQUIRED for Kafka StatefulSet.
+  # Allows DNS records to exist before pod readiness succeeds.
+  publishNotReadyAddresses: true
+
   selector:
     app: kafka
   ports:
