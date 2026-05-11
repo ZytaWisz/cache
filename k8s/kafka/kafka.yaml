@@ -42,13 +42,13 @@ spec:
 
             # IMPORTANT: stable identity in StatefulSet
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-              value: "1@kafka-0.kafka.cache-app.svc.cluster.local:9093"
+              value: "1@localhost:9093"
 
             - name: KAFKA_LISTENERS
               value: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
 
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://kafka.cache-app.svc.cluster.local:9092"
+              value: "PLAINTEXT://kafka:9092"
 
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
               value: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
