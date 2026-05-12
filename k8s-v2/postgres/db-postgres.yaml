@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: audit-postgres
+  namespace: cache-app-v2
+
+  labels:
+    app: audit-postgres
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+
+spec:
+  serviceName: audit-postgres
+  # Added serviceName because StatefulSet requires stable network identities
+  # and predictable DNS names for pods.
+
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: audit-postgres
+
+  template:
+    metadata:
+      labels:
+        app: audit-postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+
+          ports:
+            - containerPort: 5432
+
+          env:
+            - name: POSTGRES_DB
+              value: audit_db
+
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: customer-audit-service-secret
+                  key: DB_USERNAME
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-audit-service-secret
+                  key: DB_PASSWORD
+
+          args:
+            - "-c"
+            - "wal_level=logical"
+
+            - "-c"
+            - "max_replication_slots=4"
+
+            - "-c"
+            - "max_wal_senders=4"
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "150m"
+
+            limits:
+              memory: "512Mi"
+              cpu: "300m"
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+
+            initialDelaySeconds: 15
+            # Added readiness probe because StatefulSet pods
+            # should report readiness only after PostgreSQL accepts connections.
+
+            periodSeconds: 5
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+
+            initialDelaySeconds: 60
+            # Added liveness probe to allow Kubernetes
+            # to restart the container if PostgreSQL becomes unhealthy.
+
+            periodSeconds: 10
+
+  volumeClaimTemplates:
+    # Replaced standalone PVC with volumeClaimTemplates.
+    # Each StatefulSet pod gets its own dedicated persistent volume.
+
+    - metadata:
+        name: postgres-storage
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 256Mi
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: audit-postgres
+  namespace: cache-app
+
+spec:
+  clusterIP: None
+  # Changed to headless service because StatefulSet
+  # requires stable DNS identities.
+
+  selector:
+    app: audit-postgres
+
+  ports:
+    - port: 5432
+      targetPort: 5432

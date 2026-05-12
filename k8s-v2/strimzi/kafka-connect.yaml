@@ -1,0 +1,75 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: kafka-connect
+  namespace: cache-app-v2
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    strimzi.io/use-connector-resources: "true"
+
+  labels:
+    strimzi.io/cluster: kafka-connect
+
+spec:
+  version: 3.7.0
+
+  replicas: 1
+
+  bootstrapServers: kafka-kafka-bootstrap:9092
+
+  image: quay.io/debezium/connect:3.4
+
+  config:
+    group.id: connect-cluster
+
+    offset.storage.topic: connect-offsets
+    config.storage.topic: connect-configs
+    status.storage.topic: connect-status
+
+    offset.storage.replication.factor: 1
+    config.storage.replication.factor: 1
+    status.storage.replication.factor: 1
+
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter.schemas.enable: false
+
+    # Advertised hostname used by Kafka Connect workers for internal REST communication.
+    # Mainly needed in distributed/multi-replica Kafka Connect clusters.
+    rest.advertised.host.name: kafka-connect
+
+    # Prevents connectors from overriding Kafka client configuration settings.
+    # Commonly used in production for security and configuration consistency.
+    connector.client.config.override.policy: None
+
+  resources:
+    requests:
+      memory: 768Mi
+      cpu: 200m
+
+    limits:
+      memory: 1.5Gi
+      cpu: 750m
+
+# optional to Prometheus metrics
+  template:
+    pod:
+      metadata:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9404"
+
+  externalConfiguration:
+    env:
+      - name: DB_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: debezium-connector-secret
+            key: DB_USERNAME
+
+      - name: DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: debezium-connector-secret
+            key: DB_PASSWORD

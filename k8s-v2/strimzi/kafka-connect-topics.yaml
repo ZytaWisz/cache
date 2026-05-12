@@ -1,0 +1,90 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: connect-configs
+  namespace: cache-app-v2
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+
+  labels:
+    strimzi.io/cluster: kafka
+
+spec:
+  partitions: 1
+  replicas: 1
+
+  config:
+    cleanup.policy: compact
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: connect-offsets
+  namespace: cache-app-v2
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+
+  labels:
+    strimzi.io/cluster: kafka
+
+spec:
+  partitions: 1
+  replicas: 1
+
+  config:
+    cleanup.policy: compact
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: connect-status
+  namespace: cache-app-v2
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+
+  labels:
+    strimzi.io/cluster: kafka
+
+spec:
+  partitions: 1
+  replicas: 1
+
+  config:
+    cleanup.policy: compact
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: customer_topic
+  namespace: cache-app-v2
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+
+  labels:
+    strimzi.io/cluster: kafka
+
+spec:
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: schemahistory.customer
+  namespace: cache-app-v2
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+
+  labels:
+    strimzi.io/cluster: kafka
+
+spec:
+  partitions: 1
+  replicas: 1
+
+  config:
+    cleanup.policy: compact
