@@ -35,6 +35,8 @@ metadata:
   namespace: cache-app-v2
   annotations:
     argocd.argoproj.io/sync-wave: "6"
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
 
 spec:
   kafka:
