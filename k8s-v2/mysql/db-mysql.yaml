@@ -118,7 +118,7 @@ kind: Service
 
 metadata:
   name: customer-mysql
-  namespace: cache-app
+  namespace: cache-app-v2
 
 spec:
   clusterIP: None

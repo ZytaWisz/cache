@@ -122,7 +122,7 @@ kind: Service
 
 metadata:
   name: audit-postgres
-  namespace: cache-app
+  namespace: cache-app-v2
 
 spec:
   clusterIP: None
