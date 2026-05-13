@@ -1,4 +1,4 @@
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: connect-configs
@@ -17,7 +17,7 @@ spec:
     cleanup.policy: compact
 
 ---
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: connect-offsets
@@ -36,7 +36,7 @@ spec:
     cleanup.policy: compact
 
 ---
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: connect-status
@@ -55,7 +55,7 @@ spec:
     cleanup.policy: compact
 
 ---
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: customer_topic
@@ -71,7 +71,7 @@ spec:
   replicas: 1
 
 ---
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: schemahistory.customer
