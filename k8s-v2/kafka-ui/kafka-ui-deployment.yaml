@@ -53,4 +53,4 @@ spec:
     app: kafka-ui
   ports:
     - port: 8080
-      nodePort: 30080
+      nodePort: 31080
