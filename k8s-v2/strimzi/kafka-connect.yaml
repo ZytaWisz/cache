@@ -9,10 +9,20 @@ metadata:
 
 spec:
   version: 4.2.0
-  image: kafka-connect-debezium:1.0.0
   replicas: 1
 
   bootstrapServers: kafka-kafka-bootstrap:9092
+
+  build:
+    output:
+      type: docker
+      image: my-registry/kafka-connect:1.0.0
+
+    plugins:
+      - name: debezium-mysql
+        artifacts:
+          - type: tgz
+            url: https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.6.1.Final/debezium-connector-mysql-2.6.1.Final-plugin.tar.gz
 
   groupId: connect-cluster
   configStorageTopic: connect-configs
