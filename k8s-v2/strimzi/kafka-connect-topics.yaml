@@ -77,7 +77,7 @@ metadata:
   name: schemahistory.customer
   namespace: cache-app-v2
   annotations:
-    argocd.argoproj.io/sync-wave: "7"
+    argocd.argoproj.io/sync-wave: "8"
 
   labels:
     strimzi.io/cluster: kafka
