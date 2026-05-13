@@ -2,7 +2,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaConnector
 metadata:
   name: mysql-outbox-connector
-  namespace: cache-app-v2
+  namespace: strimzi-system
 
   annotations:
     argocd.argoproj.io/sync-wave: "9"

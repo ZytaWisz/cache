@@ -2,7 +2,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: connect-configs
-  namespace: cache-app-v2
+  namespace: strimzi-system
   annotations:
     argocd.argoproj.io/sync-wave: "7"
 
@@ -21,7 +21,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: connect-offsets
-  namespace: cache-app-v2
+  namespace: strimzi-system
   annotations:
     argocd.argoproj.io/sync-wave: "7"
 
@@ -40,7 +40,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: connect-status
-  namespace: cache-app-v2
+  namespace: strimzi-system
   annotations:
     argocd.argoproj.io/sync-wave: "7"
 
@@ -59,7 +59,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: customer_topic
-  namespace: cache-app-v2
+  namespace: strimzi-system
   annotations:
     argocd.argoproj.io/sync-wave: "7"
 
@@ -75,7 +75,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
   name: schemahistory.customer
-  namespace: cache-app-v2
+  namespace: strimzi-system
   annotations:
     argocd.argoproj.io/sync-wave: "8"
 
