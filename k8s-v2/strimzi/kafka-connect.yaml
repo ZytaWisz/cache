@@ -27,14 +27,12 @@ spec:
 
     key.converter: org.apache.kafka.connect.storage.StringConverter
 
-    # Enables Kafka Connect Config Providers support for environment variables.
-    # Required to resolve placeholders like ${env:DB_USERNAME} and ${env:DB_PASSWORD}
-    # in KafkaConnector configurations using values injected into the Kafka Connect pod.
-    config.providers: env
-    config.providers.env.class: org.apache.kafka.common.config.provider.EnvVarConfigProvider
-
     value.converter: org.apache.kafka.connect.json.JsonConverter
     value.converter.schemas.enable: false
+    # Enables Kafka Connect FileConfigProvider support.
+    # Allows connector configs to read values from mounted Kubernetes secrets.
+    config.providers: file
+    config.providers.file.class: org.apache.kafka.common.config.provider.FileConfigProvider
 
     # Advertised hostname used by Kafka Connect workers for internal REST communication.
     # Mainly needed in distributed/multi-replica Kafka Connect clusters.
@@ -61,15 +59,7 @@ spec:
           prometheus.io/port: "9404"
 
   externalConfiguration:
-    env:
-      - name: DB_USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: debezium-connector-secret
-            key: DB_USERNAME
-
-      - name: DB_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: debezium-connector-secret
-            key: DB_PASSWORD
+    volumes:
+      - name: connector-secrets
+        secret:
+          secretName: debezium-connector-secret
