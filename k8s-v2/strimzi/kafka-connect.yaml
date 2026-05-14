@@ -29,10 +29,6 @@ spec:
 
     value.converter: org.apache.kafka.connect.json.JsonConverter
     value.converter.schemas.enable: false
-    # Enables Kafka Connect FileConfigProvider support.
-    # Allows connector configs to read values from mounted Kubernetes secrets.
-    config.providers: file
-    config.providers.file.class: org.apache.kafka.common.config.provider.FileConfigProvider
 
     # Advertised hostname used by Kafka Connect workers for internal REST communication.
     # Mainly needed in distributed/multi-replica Kafka Connect clusters.
@@ -57,9 +53,3 @@ spec:
         annotations:
           prometheus.io/scrape: "true"
           prometheus.io/port: "9404"
-
-  externalConfiguration:
-    volumes:
-      - name: connector-secrets
-        secret:
-          secretName: debezium-connector-secret
