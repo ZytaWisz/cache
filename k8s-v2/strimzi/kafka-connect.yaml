@@ -27,6 +27,12 @@ spec:
 
     key.converter: org.apache.kafka.connect.storage.StringConverter
 
+    # Enables Kafka Connect Config Providers support for environment variables.
+    # Required to resolve placeholders like ${env:DB_USERNAME} and ${env:DB_PASSWORD}
+    # in KafkaConnector configurations using values injected into the Kafka Connect pod.
+    config.providers: env
+    config.providers.env.class: org.apache.kafka.common.config.provider.EnvVarConfigProvider
+
     value.converter: org.apache.kafka.connect.json.JsonConverter
     value.converter.schemas.enable: false
 
