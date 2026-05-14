@@ -16,7 +16,7 @@ spec:
   tasksMax: 1
 
   config:
-    database.hostname: customer-mysql
+    database.hostname: customer-mysql.cache-app-v2.svc.cluster.local
     database.port: 3306
 
     database.user: ${env:DB_USERNAME}
