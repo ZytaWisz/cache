@@ -10,6 +10,7 @@ metadata:
 spec:
   version: 4.2.0
   image: kafka-connect-debezium:1.0.0
+  imagePullPolicy: Never
   replicas: 1
 
   bootstrapServers: kafka-kafka-bootstrap:9092
