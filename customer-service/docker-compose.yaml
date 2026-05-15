@@ -11,10 +11,10 @@ services:
     container_name: customer_db
     volumes:
       - customer_db_data:/var/lib/mysql
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: customer
+      MYSQL_DATABASE: customer_db
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
