@@ -1,63 +1,6 @@
 apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
-  name: connect-configs
-  namespace: strimzi-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "7"
-
-  labels:
-    strimzi.io/cluster: kafka
-
-spec:
-  partitions: 1
-  replicas: 1
-
-  config:
-    cleanup.policy: compact
-
----
-apiVersion: kafka.strimzi.io/v1
-kind: KafkaTopic
-metadata:
-  name: connect-offsets
-  namespace: strimzi-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "7"
-
-  labels:
-    strimzi.io/cluster: kafka
-
-spec:
-  partitions: 1
-  replicas: 1
-
-  config:
-    cleanup.policy: compact
-
----
-apiVersion: kafka.strimzi.io/v1
-kind: KafkaTopic
-metadata:
-  name: connect-status
-  namespace: strimzi-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "7"
-
-  labels:
-    strimzi.io/cluster: kafka
-
-spec:
-  partitions: 1
-  replicas: 1
-
-  config:
-    cleanup.policy: compact
-
----
-apiVersion: kafka.strimzi.io/v1
-kind: KafkaTopic
-metadata:
   name: customer-topic
   namespace: strimzi-system
   annotations:
@@ -70,22 +13,3 @@ spec:
   topicName: customer_topic
   partitions: 1
   replicas: 1
-
----
-apiVersion: kafka.strimzi.io/v1
-kind: KafkaTopic
-metadata:
-  name: schemahistory.customer
-  namespace: strimzi-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "8"
-
-  labels:
-    strimzi.io/cluster: kafka
-
-spec:
-  partitions: 1
-  replicas: 1
-
-  config:
-    cleanup.policy: compact
