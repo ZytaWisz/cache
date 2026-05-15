@@ -47,8 +47,6 @@ spec:
 
 # optional to Prometheus metrics
   template:
-    connectContainer:
-      imagePullPolicy: Never
     pod:
       metadata:
         annotations:
