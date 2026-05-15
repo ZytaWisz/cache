@@ -61,11 +61,3 @@ spec:
     value.converter: org.apache.kafka.connect.json.JsonConverter
 
     value.converter.schemas.enable: false
-
-    predicates: isOutboxTable
-
-    predicates.isOutboxTable.type: org.apache.kafka.connect.transforms.predicates.TopicNameMatches
-
-    predicates.isOutboxTable.pattern: customerdb\\.customer_db\\.outbox_event
-
-    transforms.outbox.predicate: isOutboxTable
