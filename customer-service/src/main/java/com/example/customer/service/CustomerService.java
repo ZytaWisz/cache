@@ -3,18 +3,20 @@ package com.example.customer.service;
 import com.example.customer.dto.CustomerDTO;
 import com.example.customer.entity.Customer;
 import com.example.customer.entity.OutboxEvent;
+import com.example.customer.entity.ProtobufOutboxEvent;
 import com.example.customer.enums.AggregateType;
 import com.example.customer.enums.CustomerEventType;
 import com.example.customer.events.CustomerEvent;
 import com.example.customer.exceptions.CustomerNotFoundException;
 import com.example.customer.repository.CustomerRepository;
 import com.example.customer.repository.OutboxRepository;
-import tools.jackson.databind.ObjectMapper;
+import com.example.customer.repository.ProtobufOutboxRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 @Service
@@ -24,6 +26,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final OutboxRepository outboxRepository;
+    private final ProtobufOutboxRepository protobufOutboxRepository;
     private final ObjectMapper objectMapper;
 
     @Cacheable(cacheNames = "customerCache", key = "#id")
@@ -51,6 +54,26 @@ public class CustomerService {
                 customer.getUpdatedAt());
 
         outboxRepository.save(createOutboxEvent(event));
+
+        return toCustomerDto(customer);
+    }
+
+    @Transactional
+    public CustomerDTO createCustomerWithProtobuf(final String name, final String email) {
+        Customer customer = new Customer();
+        customer.setName(name);
+        customer.setEmail(email);
+
+        customerRepository.save(customer);
+
+        com.example.customer.protobuf.event.CustomerEvent event = com.example.customer.protobuf.event.CustomerEvent.newBuilder()
+                .setCustomerEventType(com.example.customer.protobuf.enums.CustomerEventType.CUSTOMER_CREATED)
+                .setCustomerId(customer.getId())
+                .setName(customer.getName())
+                .setEmail(customer.getEmail()).build();
+
+
+        protobufOutboxRepository.save(createProtobufOutboxEvent(CustomerEventType.CREATED, event));
 
         return toCustomerDto(customer);
     }
@@ -95,6 +118,14 @@ public class CustomerService {
                 customerEvent.customerId(),
                 customerEvent.customerEventType(),
                 toJson(customerEvent));
+    }
+
+    private ProtobufOutboxEvent createProtobufOutboxEvent(CustomerEventType eventType, com.example.customer.protobuf.event.CustomerEvent customerEvent){
+        return new ProtobufOutboxEvent(
+                AggregateType.CUSTOMER,
+                customerEvent.getCustomerId(),
+                eventType,
+                customerEvent.toByteArray());
     }
 
     private String toJson(Object obj) {

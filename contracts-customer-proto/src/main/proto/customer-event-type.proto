@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package customer.events;
+
+option java_package = "com.example.customer.protobuf.enums";
+option java_multiple_files = true;
+
+enum CustomerEventType{
+    CUSTOMER_CREATED=0;
+    CUSTOMER_UPDATED=1;
+    CUSTOMER_DELETED=2;
+}

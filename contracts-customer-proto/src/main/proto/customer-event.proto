@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package customer.events;
+
+import "customer-event-type.proto";
+
+option java_package = "com.example.customer.protobuf.event";
+option java_multiple_files = true;
+
+message CustomerEvent {
+  CustomerEventType customerEventType = 1;
+  int64 customerId = 2;
+  string name = 3;
+  string email = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+}

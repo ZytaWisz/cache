@@ -1,0 +1,61 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnector
+metadata:
+  name: debezium-proto-outbox-connector
+  namespace: strimzi-system
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "9"
+
+  labels:
+    strimzi.io/cluster: kafka-connect
+
+spec:
+  class: io.debezium.connector.mysql.MySqlConnector
+
+  tasksMax: 1
+
+  config:
+    database.hostname: customer-mysql.cache-app-v2.svc.cluster.local
+    database.port: 3306
+
+    database.user: user
+    database.password: password
+
+    database.server.id: 184054
+
+    topic.prefix: customerdb
+
+    database.include.list: customer_db
+
+    table.include.list: customer_db.protobuf_outbox_event
+
+    include.schema.changes: false
+
+    tombstones.on.delete: false
+
+    schema.history.internal.kafka.bootstrap.servers: kafka-kafka-bootstrap:9092
+
+    schema.history.internal.kafka.topic: schemahistory.customer
+
+    snapshot.mode: initial
+
+    transforms: outbox
+
+    transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
+
+    transforms.outbox.route.by.field: aggregate_type
+
+    transforms.outbox.route.topic.replacement: customer_proto
+
+    transforms.outbox.table.field.event.id: event_id
+
+    transforms.outbox.table.field.event.key: aggregate_id
+
+    transforms.outbox.table.field.event.payload: payload
+
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+
+    value.converter: org.apache.kafka.connect.converters.ByteArrayConverter
+
+    value.converter.schemas.enable: false

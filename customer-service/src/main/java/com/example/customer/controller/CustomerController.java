@@ -25,6 +25,14 @@ public class CustomerController {
                  customerRequestBody.email());
     }
 
+    @PostMapping("/customer/proto")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CustomerDTO createProtoCustomer(@RequestBody @Valid CustomerRequestBody customerRequestBody) {
+        return customerService.createCustomerWithProtobuf(
+                customerRequestBody.name(),
+                customerRequestBody.email());
+    }
+
     @PutMapping("/customer/{id}")
     public CustomerDTO updateCustomer(
             @PathVariable final String id,
