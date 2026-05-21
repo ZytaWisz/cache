@@ -13,3 +13,26 @@ spec:
   topicName: customer_topic
   partitions: 1
   replicas: 1
+  config:
+    min.insync.replicas: 1
+    cleanup.policy: delete
+
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: customer-proto
+  namespace: strimzi-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+
+  labels:
+    strimzi.io/cluster: kafka
+
+spec:
+  topicName: customer_proto
+  partitions: 1
+  replicas: 1
+  config:
+    min.insync.replicas: 1
+    cleanup.policy: delete

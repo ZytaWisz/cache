@@ -11,6 +11,7 @@ import com.example.customer.exceptions.CustomerNotFoundException;
 import com.example.customer.repository.CustomerRepository;
 import com.example.customer.repository.OutboxRepository;
 import com.example.customer.repository.ProtobufOutboxRepository;
+import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -70,7 +74,9 @@ public class CustomerService {
                 .setCustomerEventType(com.example.customer.protobuf.enums.CustomerEventType.CUSTOMER_CREATED)
                 .setCustomerId(customer.getId())
                 .setName(customer.getName())
-                .setEmail(customer.getEmail()).build();
+                .setEmail(customer.getEmail())
+                .setCreatedAt(toTimestamp(customer.getCreatedAt()))
+                .build();
 
 
         protobufOutboxRepository.save(createProtobufOutboxEvent(CustomerEventType.CREATED, event));
@@ -144,5 +150,16 @@ public class CustomerService {
                 customer.getCreatedAt(),
                 customer.getUpdatedAt()
         );
+    }
+    private Timestamp toTimestamp(LocalDateTime localDateTime) {
+
+        Instant instant = localDateTime
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
+
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
     }
 }

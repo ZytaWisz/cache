@@ -3,6 +3,7 @@ syntax = "proto3";
 package customer.events;
 
 import "customer-event-type.proto";
+import "google/protobuf/timestamp.proto";
 
 option java_package = "com.example.customer.protobuf.event";
 option java_multiple_files = true;
@@ -12,6 +13,6 @@ message CustomerEvent {
   int64 customerId = 2;
   string name = 3;
   string email = 4;
-  string createdAt = 5;
-  string updatedAt = 6;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
 }
