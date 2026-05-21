@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: customer-service:0.0.4
+          image: customer-service:0.0.5
           imagePullPolicy: Never
           ports:
             - containerPort: 8080

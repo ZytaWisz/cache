@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: audit-service:0.0.4
+          image: audit-service:0.0.5
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
