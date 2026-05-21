@@ -22,7 +22,7 @@ spec:
     database.user: user
     database.password: password
 
-    database.server.id: 184054
+    database.server.id: 184055
 
     topic.prefix: customerdb
 
