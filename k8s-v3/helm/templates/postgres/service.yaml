@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: {{ .Values.postgres.hostname }}
+  namespace: {{ .Values.namespace }}
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.postgres }}"
+
+spec:
+  clusterIP: None
+
+  selector:
+    app: {{ .Values.postgres.hostname }}
+
+  ports:
+    - port: {{ .Values.postgres.port }}
+
+      targetPort: {{ .Values.postgres.port }}

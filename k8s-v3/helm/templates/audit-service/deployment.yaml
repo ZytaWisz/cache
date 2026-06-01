@@ -1,0 +1,80 @@
+  apiVersion: apps/v1
+  kind: Deployment
+
+  metadata:
+    name: {{ .Values.auditService.name }}
+    namespace: {{ .Values.namespace }}
+
+    annotations:
+      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.auditService }}"
+
+  spec:
+    replicas: {{ .Values.auditService.replicas }}
+
+    selector:
+      matchLabels:
+        app: {{ .Values.auditService.name }}
+
+    template:
+      metadata:
+        labels:
+          app: {{ .Values.auditService.name }}
+
+      spec:
+        containers:
+          - name: app
+
+            image: {{ .Values.auditService.image }}
+
+            imagePullPolicy: Never
+
+            ports:
+              - containerPort: 8080
+
+            env:
+              - name: SPRING_PROFILES_ACTIVE
+                value: k8s
+
+            envFrom:
+              - configMapRef:
+                  name: customer-audit-service-config
+
+              - secretRef:
+                  name: customer-audit-service-secret
+
+            readinessProbe:
+              httpGet:
+                path: /actuator/health/readiness
+                port: 8080
+
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              failureThreshold: 5
+
+            livenessProbe:
+              httpGet:
+                path: /actuator/health/liveness
+                port: 8080
+
+              initialDelaySeconds: 90
+              periodSeconds: 15
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Values.auditService.name }}
+    namespace: {{ .Values.namespace }}
+
+    labels:
+      app: {{ .Values.auditService.name }}
+
+  spec:
+    type: {{ .Values.auditService.service.type }}
+
+    selector:
+      app: {{ .Values.auditService.name }}
+
+    ports:
+      - port: {{ .Values.auditService.service.port }}
+        targetPort: {{ .Values.auditService.service.targetPort }}
+        nodePort: {{ .Values.auditService.service.nodePort }}

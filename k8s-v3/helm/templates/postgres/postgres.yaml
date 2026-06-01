@@ -1,0 +1,107 @@
+  apiVersion: apps/v1
+  kind: StatefulSet
+
+  metadata:
+    name: {{ .Values.postgres.hostname }}
+    namespace: {{ .Values.namespace }}
+
+    labels:
+      app: {{ .Values.postgres.hostname }}
+
+    annotations:
+      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.postgres }}"
+
+  spec:
+    serviceName: {{ .Values.postgres.hostname }}
+
+    replicas: {{ .Values.postgres.replicas }}
+
+    selector:
+      matchLabels:
+        app: {{ .Values.postgres.hostname }}
+
+    template:
+      metadata:
+        labels:
+          app: {{ .Values.postgres.hostname }}
+
+      spec:
+        containers:
+          - name: postgres
+
+            image: {{ .Values.postgres.image }}
+
+            ports:
+              - containerPort: {{ .Values.postgres.port }}
+
+            env:
+              - name: POSTGRES_DB
+                value: {{ .Values.postgres.database }}
+
+              - name: POSTGRES_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: customer-audit-service-secret
+                    key: DB_USERNAME
+
+              - name: POSTGRES_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: customer-audit-service-secret
+                    key: DB_PASSWORD
+
+            args:
+              - "-c"
+              - "wal_level=logical"
+
+              - "-c"
+              - "max_replication_slots=4"
+
+              - "-c"
+              - "max_wal_senders=4"
+
+            volumeMounts:
+              - name: postgres-storage
+                mountPath: /var/lib/postgresql/data
+
+            resources:
+              requests:
+                memory: "384Mi"
+                cpu: "150m"
+
+              limits:
+                memory: "512Mi"
+                cpu: "300m"
+
+            readinessProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+
+              initialDelaySeconds: 15
+              periodSeconds: 5
+
+            livenessProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+
+              initialDelaySeconds: 60
+              periodSeconds: 10
+
+    volumeClaimTemplates:
+      - metadata:
+          name: postgres-storage
+
+        spec:
+          accessModes:
+            - ReadWriteOnce
+
+          resources:
+            requests:
+              storage: {{ .Values.postgres.storage }}
+

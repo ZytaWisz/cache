@@ -1,0 +1,58 @@
+  apiVersion: kafka.strimzi.io/v1
+  kind: KafkaConnect
+
+  metadata:
+    name: {{ .Values.kafkaConnect.name }}
+    namespace: {{ .Values.kafka.namespace }}
+
+    labels:
+      strimzi.io/cluster: { { .Values.kafkaConnect.name } }
+
+    annotations:
+      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaConnect }}"
+      strimzi.io/use-connector-resources: "true"
+
+  spec:
+    version: {{ .Values.kafka.version }}
+
+    image: {{ .Values.kafkaConnect.image }}
+
+    replicas: 1
+
+    bootstrapServers: {{ .Values.kafka-v3.bootstrapServers }}
+
+    groupId: {{ .Values.kafkaConnect.groupId }}
+
+    configStorageTopic: {{ .Values.kafkaConnect.configStorageTopic }}
+    offsetStorageTopic: {{ .Values.kafkaConnect.offsetStorageTopic }}
+    statusStorageTopic: {{ .Values.kafkaConnect.statusStorageTopic }}
+
+    config:
+      offset.storage.replication.factor: 1
+      config.storage.replication.factor: 1
+      status.storage.replication.factor: 1
+
+      key.converter: org.apache.kafka.connect.storage.StringConverter
+
+      value.converter: org.apache.kafka.connect.json.JsonConverter
+      value.converter.schemas.enable: false
+
+      rest.advertised.host.name: kafka-connect
+
+      connector.client.config.override.policy: None
+
+    resources:
+      requests:
+        memory: 768Mi
+        cpu: 200m
+
+      limits:
+        memory: 1.5Gi
+        cpu: 750m
+
+    template:
+      pod:
+        metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9404"

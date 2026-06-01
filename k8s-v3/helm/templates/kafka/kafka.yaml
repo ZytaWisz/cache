@@ -1,0 +1,36 @@
+  apiVersion: kafka.strimzi.io/v1
+  kind: Kafka
+
+  metadata:
+    name: {{ .Values.kafka.name }}
+    namespace: {{ .Values.kafka.namespace }}
+
+    annotations:
+      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafka }}"
+
+  spec:
+    kafka:
+      version: {{ .Values.kafka.version }}
+
+      listeners:
+        - name: plain
+          port: 9092
+          type: internal
+          tls: false
+
+      config:
+        auto.create.topics.enable: false
+        log.retention.hours: 24
+
+        offsets.topic.replication.factor: 1
+        transaction.state.log.replication.factor: 1
+        transaction.state.log.min.isr: 1
+
+        default.replication.factor: 1
+        min.insync.replicas: 1
+
+        group.initial.rebalance.delay.ms: 0
+
+    entityOperator:
+      topicOperator: {}
+      userOperator: {}

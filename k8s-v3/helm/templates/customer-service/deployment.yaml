@@ -1,0 +1,49 @@
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+    name: customer-service
+    namespace: {{ .Values.namespace }}
+    annotations:
+      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.customerService }}"
+
+ spec:
+    replicas: 1
+
+    selector:
+      matchLabels:
+        app: customer-service
+
+    template:
+      metadata:
+        labels:
+          app: customer-service
+
+      spec:
+        containers:
+          - name: app
+            image: {{ .Values.customerService.image }}
+            imagePullPolicy: Never
+
+            ports:
+              - containerPort: 8080
+
+            envFrom:
+              - configMapRef:
+                  name: customer-service-config
+              - secretRef:
+                  name: customer-service-secret
+
+            readinessProbe:
+              httpGet:
+                path: /actuator/health/readiness
+                port: 8080
+              initialDelaySeconds: 60
+              periodSeconds: 10
+
+            livenessProbe:
+              httpGet:
+                path: /actuator/health/liveness
+                port: 8080
+              initialDelaySeconds: 90
+              periodSeconds: 15
+

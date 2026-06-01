@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: { { .Values.redis.name } }
+  namespace: { { .Values.namespace } }
+
+  labels:
+    app: { { .Values.redis.name } }
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.redis }}"
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: { { .Values.redis.name } }
+
+  ports:
+    - port: { { .Values.redis.port } }
+
+      targetPort: { { .Values.redis.port } }
