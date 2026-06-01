@@ -1,3 +1,4 @@
+   {{- if .Values.auditService.enabled }}
   apiVersion: v1
   kind: ConfigMap
 
@@ -14,3 +15,4 @@
     DB_URL: "jdbc:postgresql://{{ .Values.postgres.hostname }}:{{ .Values.postgres.port }}/{{ .Values.postgres.database }}"
 
     SPRING_KAFKA_BOOTSTRAP_SERVERS: "{{ .Values.kafka.bootstrapServers }}"
+{{- end }}

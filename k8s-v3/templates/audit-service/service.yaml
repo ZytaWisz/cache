@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.auditService.name }}
+  namespace: {{ .Values.namespace }}
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.auditService }}"
+
+  labels:
+    app: {{ .Values.auditService.name }}
+
+spec:
+  type: {{ .Values.auditService.service.type }}
+
+  selector:
+    app: {{ .Values.auditService.name }}
+
+  ports:
+    - port: {{ .Values.auditService.service.port }}
+      targetPort: {{ .Values.auditService.service.targetPort }}
+      nodePort: {{ .Values.auditService.service.nodePort }}

@@ -2,6 +2,7 @@
   activeProfiles: k8s
 
   kafka:
+    enabled: true
     name: kafka-v3
     version: 4.2.0
     namespace: strimzi-system
@@ -13,6 +14,7 @@
       customerProtoTopic: cache-app-v3.customer_proto
 
   kafkaConnect:
+    enabled: true
     name: kafka-connect
 
     image: kafka-connect-debezium:1.0.1
@@ -24,10 +26,12 @@
     statusStorageTopic: cache-app-v3-connect-status
 
   debezium:
+    enabled: true
     mysqlOutboxServerId: 284054
     mysqlProtoServerId: 284055
 
   customerService:
+    enabled: true
     name: customer-service
     image: customer-service:0.0.5
 
@@ -40,6 +44,7 @@
       nodePort: 31101
 
   mysql:
+    enabled: true
     hostname: customer-mysql
     image: mysql:8.0
 
@@ -54,6 +59,7 @@
     storage: 256Mi
 
   auditService:
+    enabled: true
     name: audit-service
     image: audit-service:0.0.5
 
@@ -66,6 +72,7 @@
       nodePort: 31102
 
   postgres:
+    enabled: true
     hostname: audit-postgres
     image: postgres:15
 
@@ -79,6 +86,7 @@
     storage: 256Mi
 
   kafkaUi:
+    enabled: true
     name: kafka-ui
     image: provectuslabs/kafka-ui:latest
 
@@ -93,6 +101,7 @@
       nodePort: 32180
 
   redis:
+
    name: customer-redis
    image: redis:7-alpine
 

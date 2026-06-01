@@ -58,23 +58,3 @@
 
               initialDelaySeconds: 90
               periodSeconds: 15
----
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: {{ .Values.auditService.name }}
-    namespace: {{ .Values.namespace }}
-
-    labels:
-      app: {{ .Values.auditService.name }}
-
-  spec:
-    type: {{ .Values.auditService.service.type }}
-
-    selector:
-      app: {{ .Values.auditService.name }}
-
-    ports:
-      - port: {{ .Values.auditService.service.port }}
-        targetPort: {{ .Values.auditService.service.targetPort }}
-        nodePort: {{ .Values.auditService.service.nodePort }}
