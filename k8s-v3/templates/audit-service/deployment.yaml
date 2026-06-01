@@ -1,60 +1,60 @@
-  apiVersion: apps/v1
-  kind: Deployment
+apiVersion: apps/v1
+kind: Deployment
 
-  metadata:
-    name: {{ .Values.auditService.name }}
-    namespace: {{ .Values.namespace }}
+metadata:
+  name: {{ .Values.auditService.name }}
+  namespace: {{ .Values.namespace }}
 
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.auditService }}"
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.auditService }}"
 
-  spec:
-    replicas: {{ .Values.auditService.replicas }}
+spec:
+  replicas: {{ .Values.auditService.replicas }}
 
-    selector:
-      matchLabels:
+  selector:
+    matchLabels:
+      app: {{ .Values.auditService.name }}
+
+  template:
+    metadata:
+      labels:
         app: {{ .Values.auditService.name }}
 
-    template:
-      metadata:
-        labels:
-          app: {{ .Values.auditService.name }}
+    spec:
+      containers:
+        - name: app
 
-      spec:
-        containers:
-          - name: app
+          image: {{ .Values.auditService.image }}
 
-            image: {{ .Values.auditService.image }}
+          imagePullPolicy: Never
 
-            imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
 
-            ports:
-              - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
 
-            env:
-              - name: SPRING_PROFILES_ACTIVE
-                value: k8s
+          envFrom:
+            - configMapRef:
+                name: customer-audit-service-config
 
-            envFrom:
-              - configMapRef:
-                  name: customer-audit-service-config
+            - secretRef:
+                name: customer-audit-service-secret
 
-              - secretRef:
-                  name: customer-audit-service-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
 
-            readinessProbe:
-              httpGet:
-                path: /actuator/health/readiness
-                port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 5
 
-              initialDelaySeconds: 60
-              periodSeconds: 10
-              failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
 
-            livenessProbe:
-              httpGet:
-                path: /actuator/health/liveness
-                port: 8080
-
-              initialDelaySeconds: 90
-              periodSeconds: 15
+            initialDelaySeconds: 90
+            periodSeconds: 15

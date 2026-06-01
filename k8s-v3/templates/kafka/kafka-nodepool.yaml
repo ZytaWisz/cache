@@ -1,33 +1,33 @@
-  apiVersion: kafka.strimzi.io/v1
-  kind: KafkaNodePool
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
 
-  metadata:
-    name: {{ .Values.kafka.name }}
-    namespace: {{ .Values.kafka.namespace }}
+metadata:
+  name: {{ .Values.kafka.name }}
+  namespace: {{ .Values.kafka.namespace }}
 
-    labels:
-      strimzi.io/cluster: {{ .Values.kafka.name }}
+  labels:
+    strimzi.io/cluster: {{ .Values.kafka.name }}
 
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaNodePool }}"
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaNodePool }}"
 
-  spec:
-    replicas: 1
+spec:
+  replicas: 1
 
-    roles:
-      - controller
-      - broker
+  roles:
+    - controller
+    - broker
 
-    storage:
-      type: persistent-claim
-      size: 5Gi
-      deleteClaim: false
+  storage:
+    type: persistent-claim
+    size: 5Gi
+    deleteClaim: false
 
-    resources:
-      requests:
-        memory: 512Mi
-        cpu: 200m
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 200m
 
-      limits:
-        memory: 1Gi
-        cpu: 500m
+    limits:
+      memory: 1Gi
+      cpu: 500m

@@ -1,15 +1,15 @@
-   {{- if .Values.auditService.enabled }}
-  apiVersion: v1
-  kind: ConfigMap
+{{- if .Values.auditService.enabled }}
+apiVersion: v1
+kind: ConfigMap
 
-  metadata:
+metadata:
     name: customer-audit-service-config
     namespace: {{ .Values.namespace }}
 
     annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.auditServiceConfigMap }}"
+        argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.auditServiceConfigMap }}"
 
-  data:
+data:
     SPRING_PROFILES_ACTIVE: "{{ .Values.activeProfiles }}"
 
     DB_URL: "jdbc:postgresql://{{ .Values.postgres.hostname }}:{{ .Values.postgres.port }}/{{ .Values.postgres.database }}"

@@ -1,49 +1,53 @@
- apiVersion: apps/v1
- kind: Deployment
- metadata:
-    name: customer-service
-    namespace: {{ .Values.namespace }}
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.customerService }}"
+apiVersion: apps/v1
+kind: Deployment
 
- spec:
-    replicas: 1
+metadata:
+  name: {{ .Values.customerService.name }}
+  namespace: {{ .Values.namespace }}
 
-    selector:
-      matchLabels:
-        app: customer-service
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.customerService }}"
 
-    template:
-      metadata:
-        labels:
-          app: customer-service
+spec:
+  replicas: 1
 
-      spec:
-        containers:
-          - name: app
-            image: {{ .Values.customerService.image }}
-            imagePullPolicy: Never
+  selector:
+    matchLabels:
+      app: {{ .Values.customerService.name }}
 
-            ports:
-              - containerPort: 8080
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.customerService.name }}
 
-            envFrom:
-              - configMapRef:
-                  name: customer-service-config
-              - secretRef:
-                  name: customer-service-secret
+    spec:
+      containers:
+        - name: app
+          image: {{ .Values.customerService.image }}
+          imagePullPolicy: Never
 
-            readinessProbe:
-              httpGet:
-                path: /actuator/health/readiness
-                port: 8080
-              initialDelaySeconds: 60
-              periodSeconds: 10
+          ports:
+            - containerPort: 8080
 
-            livenessProbe:
-              httpGet:
-                path: /actuator/health/liveness
-                port: 8080
-              initialDelaySeconds: 90
-              periodSeconds: 15
+          envFrom:
+            - configMapRef:
+                name: customer-service-config
 
+            - secretRef:
+                name: customer-service-secret
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+
+            initialDelaySeconds: 60
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+
+            initialDelaySeconds: 90
+            periodSeconds: 15

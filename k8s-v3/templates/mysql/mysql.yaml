@@ -1,108 +1,108 @@
-  apiVersion: apps/v1
-  kind: StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
 
-  metadata:
-    name: {{ .Values.mysql.hostname }}
-    namespace: {{ .Values.namespace }}
+metadata:
+  name: {{ .Values.mysql.hostname }}
+  namespace: {{ .Values.namespace }}
 
-    labels:
+  labels:
+    app: {{ .Values.mysql.hostname }}
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.mysql }}"
+
+spec:
+  serviceName: {{ .Values.mysql.hostname }}
+
+  replicas: {{ .Values.mysql.replicas }}
+
+  selector:
+    matchLabels:
       app: {{ .Values.mysql.hostname }}
 
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.mysql }}"
-
-  spec:
-    serviceName: {{ .Values.mysql.hostname }}
-
-    replicas: {{ .Values.mysql.replicas }}
-
-    selector:
-      matchLabels:
+  template:
+    metadata:
+      labels:
         app: {{ .Values.mysql.hostname }}
 
-    template:
-      metadata:
-        labels:
-          app: {{ .Values.mysql.hostname }}
+    spec:
+      containers:
+        - name: mysql
 
-      spec:
-        containers:
-          - name: mysql
+          image: {{ .Values.mysql.image }}
 
-            image: {{ .Values.mysql.image }}
+          ports:
+            - containerPort: {{ .Values.mysql.port }}
 
-            ports:
-              - containerPort: {{ .Values.mysql.port }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_ROOT_PASSWORD
 
-            env:
-              - name: MYSQL_ROOT_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: customer-service-secret
-                    key: DB_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql.database }}
 
-              - name: MYSQL_DATABASE
-                value: {{ .Values.mysql.database }}
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_USERNAME
 
-              - name: MYSQL_USER
-                valueFrom:
-                  secretKeyRef:
-                    name: customer-service-secret
-                    key: DB_USERNAME
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: customer-service-secret
+                  key: DB_PASSWORD
 
-              - name: MYSQL_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: customer-service-secret
-                    key: DB_PASSWORD
+          args:
+            - "--server-id=1"
+            - "--log-bin=mysql-bin"
+            - "--binlog-format=ROW"
+            - "--binlog-row-image=FULL"
 
-            args:
-              - "--server-id=1"
-              - "--log-bin=mysql-bin"
-              - "--binlog-format=ROW"
-              - "--binlog-row-image=FULL"
-
-            volumeMounts:
-              - name: mysql-storage
-                mountPath: /var/lib/mysql
-
-            resources:
-              requests:
-                memory: "512Mi"
-                cpu: "200m"
-
-              limits:
-                memory: "768Mi"
-                cpu: "500m"
-
-            readinessProbe:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
-
-              initialDelaySeconds: 20
-              periodSeconds: 5
-
-            livenessProbe:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - mysqladmin ping -h 127.0.0.1 -u root -p"$MYSQL_ROOT_PASSWORD"
-
-              initialDelaySeconds: 60
-              periodSeconds: 10
-
-    volumeClaimTemplates:
-      - metadata:
-          name: mysql-storage
-
-        spec:
-          accessModes:
-            - ReadWriteOnce
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
 
           resources:
             requests:
-              storage: {{ .Values.mysql.storage }}
+              memory: "512Mi"
+              cpu: "200m"
+
+            limits:
+              memory: "768Mi"
+              cpu: "500m"
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
+
+            initialDelaySeconds: 20
+            periodSeconds: 5
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysqladmin ping -h 127.0.0.1 -u root -p"$MYSQL_ROOT_PASSWORD"
+
+            initialDelaySeconds: 60
+            periodSeconds: 10
+
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-storage
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: {{ .Values.mysql.storage }}

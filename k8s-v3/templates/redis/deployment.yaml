@@ -1,62 +1,62 @@
-  apiVersion: apps/v1
-  kind: Deployment
+apiVersion: apps/v1
+kind: Deployment
 
-  metadata:
-    name: {{ .Values.redis.name }}
-    namespace: {{ .Values.namespace }}
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
 
-    labels:
+  labels:
+    app: {{ .Values.redis.name }}
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.redis }}"
+
+spec:
+  replicas: {{ .Values.redis.replicas }}
+
+  selector:
+    matchLabels:
       app: {{ .Values.redis.name }}
 
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.redis }}"
-
-  spec:
-    replicas: {{ .Values.redis.replicas }}
-
-    selector:
-      matchLabels:
+  template:
+    metadata:
+      labels:
         app: {{ .Values.redis.name }}
 
-    template:
-      metadata:
-        labels:
-          app: {{ .Values.redis.name }}
+    spec:
+      containers:
+        - name: redis
 
-      spec:
-        containers:
-          - name: redis
+          image: {{ .Values.redis.image }}
 
-            image: {{ .Values.redis.image }}
+          ports:
+            - containerPort: {{ .Values.redis.port }}
 
-            ports:
-              - containerPort: {{ .Values.redis.port }}
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
 
-            resources:
-              requests:
-                memory: "64Mi"
-                cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
 
-              limits:
-                memory: "128Mi"
-                cpu: "100m"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli ping
 
-            livenessProbe:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - redis-cli ping
+            initialDelaySeconds: 10
+            periodSeconds: 5
 
-              initialDelaySeconds: 10
-              periodSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli ping
 
-            readinessProbe:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - redis-cli ping
-
-              initialDelaySeconds: 5
-              periodSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 5

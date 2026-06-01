@@ -1,46 +1,46 @@
-  apiVersion: kafka.strimzi.io/v1
-  kind: KafkaTopic
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
 
-  metadata:
-    name: customer-topic
-    namespace: {{ .Values.kafka.namespace }}
+metadata:
+  name: customer-topic
+  namespace: {{ .Values.kafka.namespace }}
 
-    labels:
-      strimzi.io/cluster: {{ .Values.kafka.name }}
+  labels:
+    strimzi.io/cluster: {{ .Values.kafka.name }}
 
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaTopics }}"
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaTopics }}"
 
-  spec:
-    topicName: {{ .Values.kafka.topics.customerTopic }}
+spec:
+  topicName: {{ .Values.kafka.topics.customerTopic }}
 
-    partitions: 1
-    replicas: 1
+  partitions: 1
+  replicas: 1
 
-    config:
-      min.insync.replicas: 1
-      cleanup.policy: delete
+  config:
+    min.insync.replicas: 1
+    cleanup.policy: delete
 
 ---
-  apiVersion: kafka.strimzi.io/v1
-  kind: KafkaTopic
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
 
-  metadata:
-    name: customer-proto
-    namespace: {{ .Values.namespace }}
+metadata:
+  name: customer-proto
+  namespace: {{ .Values.namespace }}
 
-    labels:
-      strimzi.io/cluster: {{ .Values.kafka.name }}
+  labels:
+    strimzi.io/cluster: {{ .Values.kafka.name }}
 
-    annotations:
-      argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaTopics }}"
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.kafkaTopics }}"
 
-  spec:
-    topicName: {{ .Values.kafka.topics.customerProtoTopic }}
+spec:
+  topicName: {{ .Values.kafka.topics.customerProtoTopic }}
 
-    partitions: 1
-    replicas: 1
+  partitions: 1
+  replicas: 1
 
-    config:
-      min.insync.replicas: 1
-      cleanup.policy: delete
+  config:
+    min.insync.replicas: 1
+    cleanup.policy: delete
