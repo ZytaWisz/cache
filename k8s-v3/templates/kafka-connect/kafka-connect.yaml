@@ -19,7 +19,7 @@
 
     replicas: 1
 
-    bootstrapServers: {{ .Values.kafka-v3.bootstrapServers }}
+    bootstrapServers: {{ .Values.kafka.bootstrapServers }}
 
     groupId: {{ .Values.kafkaConnect.groupId }}
 

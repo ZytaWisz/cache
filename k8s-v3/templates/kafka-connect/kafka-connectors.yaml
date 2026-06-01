@@ -35,7 +35,7 @@
 
       tombstones.on.delete: false
 
-      schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka-v3.bootstrapServers }}
+      schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka.bootstrapServers }}
 
       schema.history.internal.kafka.topic: schemahistory.customer
 
@@ -101,7 +101,7 @@
 
       tombstones.on.delete: false
 
-      schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka-v3.bootstrapServers }}
+      schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka.bootstrapServers }}
 
       schema.history.internal.kafka.topic: schemahistory.customer
 
