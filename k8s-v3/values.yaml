@@ -7,7 +7,7 @@
     version: 4.2.0
     namespace: strimzi-system
 
-    bootstrapServers: kafka-v3-kafka-bootstrap:9092
+    bootstrapServers: kafka-v3-kafka-bootstrap.strimzi-system.svc.cluster.local:9092
 
     topics:
       customerTopic: cache-app-v3.customer_topic
@@ -45,7 +45,7 @@
 
   mysql:
     enabled: true
-    hostname: customer-mysql
+    hostname: customer-mysql.cache-app-v3.svc.cluster.local
     image: mysql:8.0
 
     replicas: 1
@@ -104,6 +104,7 @@
 
    name: customer-redis
    image: redis:7-alpine
+   hostname: customer-redis
 
    replicas: 1
    port: 6379

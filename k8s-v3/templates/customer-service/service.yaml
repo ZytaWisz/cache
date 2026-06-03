@@ -4,6 +4,9 @@ metadata:
   name: customer-service
   namespace: {{ .Values.namespace }}
 
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.customerServiceService }}"
+
 spec:
   type: NodePort
 
