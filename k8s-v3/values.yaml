@@ -46,6 +46,7 @@
   mysql:
     enabled: true
     hostname: customer-mysql.cache-app-v3.svc.cluster.local
+    name: customer-mysql
     image: mysql:8.0
 
     replicas: 1
