@@ -2,28 +2,28 @@ apiVersion: apps/v1
 kind: StatefulSet
 
 metadata:
-  name: {{ .Values.mysql.hostname }}
+  name: {{ .Values.mysql.name }}
   namespace: {{ .Values.namespace }}
 
   labels:
-    app: {{ .Values.mysql.hostname }}
+    app: {{ .Values.mysql.name }}
 
   annotations:
     argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.mysql }}"
 
 spec:
-  serviceName: {{ .Values.mysql.hostname }}
+  serviceName: {{ .Values.mysql.name }}
 
   replicas: {{ .Values.mysql.replicas }}
 
   selector:
     matchLabels:
-      app: {{ .Values.mysql.hostname }}
+      app: {{ .Values.mysql.name }}
 
   template:
     metadata:
       labels:
-        app: {{ .Values.mysql.hostname }}
+        app: {{ .Values.mysql.name }}
 
     spec:
       containers:

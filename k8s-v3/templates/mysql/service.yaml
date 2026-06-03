@@ -12,7 +12,7 @@ spec:
   clusterIP: None
 
   selector:
-    app: {{ .Values.mysql.hostname }}
+    app: {{ .Values.mysql.name }}
 
   ports:
     - port: {{ .Values.mysql.port }}
