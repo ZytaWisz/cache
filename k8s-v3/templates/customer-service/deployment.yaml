@@ -9,7 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "{{ .Values.syncWaves.customerService }}"
 
 spec:
-  replicas: 1
+  replicas: {{ .Values.customerService.replicas }}
 
   selector:
     matchLabels:

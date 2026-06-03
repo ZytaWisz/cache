@@ -27,7 +27,7 @@ kind: KafkaTopic
 
 metadata:
   name: customer-proto
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.kafka.namespace }}
 
   labels:
     strimzi.io/cluster: {{ .Values.kafka.name }}

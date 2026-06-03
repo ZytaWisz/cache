@@ -69,7 +69,7 @@ kind: KafkaConnector
 
 metadata:
   name: debezium-proto-outbox-connector
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.kafka.namespace }}
 
   labels:
     strimzi.io/cluster: {{ .Values.kafkaConnect.name }}
