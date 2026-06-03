@@ -10,8 +10,8 @@
     bootstrapServers: kafka-v3-kafka-bootstrap.strimzi-system.svc.cluster.local:9092
 
     topics:
-      customerTopic: cache-app-v3.customer_topic
-      customerProtoTopic: cache-app-v3.customer_proto
+      customerTopic: customer_topic
+      customerProtoTopic: customer_proto
 
   kafkaConnect:
     enabled: true
