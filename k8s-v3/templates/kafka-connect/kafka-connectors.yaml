@@ -24,8 +24,10 @@ spec:
     database.password: {{ .Values.mysql.password }}
 
     database.server.id: {{ .Values.debezium.mysqlOutboxServerId }}
+    database.server.name: customerdb-outbox
 
-    topic.prefix: customerdb
+
+    topic.prefix: customerdb_outbox
 
     database.include.list: {{ .Values.mysql.database }}
 
@@ -37,7 +39,7 @@ spec:
 
     schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka.bootstrapServers }}
 
-    schema.history.internal.kafka.topic: schemahistory.customer
+    schema.history.internal.kafka.topic: chemahistory.customer.outbox
 
     snapshot.mode: initial
 
@@ -103,7 +105,7 @@ spec:
 
     schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka.bootstrapServers }}
 
-    schema.history.internal.kafka.topic: schemahistory.customer
+    schema.history.internal.kafka.topic: schemahistory.customer.proto
 
     snapshot.mode: initial
 
