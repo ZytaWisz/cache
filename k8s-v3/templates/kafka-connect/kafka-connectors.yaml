@@ -39,7 +39,7 @@ spec:
 
     schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafka.bootstrapServers }}
 
-    schema.history.internal.kafka.topic: chemahistory.customer.outbox
+    schema.history.internal.kafka.topic: schemahistory.customer.outbox
 
     snapshot.mode: initial
 
