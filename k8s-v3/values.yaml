@@ -57,7 +57,9 @@
     password: password
     rootPassword: root
 
-    storage: 256Mi
+    storage: 2Gi
+    storageClassName: standard
+    binlogExpireLogsSeconds: 604800
 
   auditService:
     enabled: true

@@ -37,7 +37,7 @@ spec:
     value.converter: org.apache.kafka.connect.json.JsonConverter
     value.converter.schemas.enable: false
 
-    rest.advertised.host.name: kafka-connect
+#    rest.advertised.host.name: kafka-connect-debezium
 
     connector.client.config.override.policy: None
 

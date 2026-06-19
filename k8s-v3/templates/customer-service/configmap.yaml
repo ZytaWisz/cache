@@ -14,7 +14,7 @@ data:
 
     DB_URL: "jdbc:mysql://{{ .Values.mysql.hostname }}:{{ .Values.mysql.port }}/{{ .Values.mysql.database }}"
 
-    SPRING_REDIS_HOST: "{{ .Values.redis.hostname }}"
+    REDIS_HOST: "{{ .Values.redis.hostname }}"
 
     REDIS_PORT: "{{ .Values.redis.port }}"
 

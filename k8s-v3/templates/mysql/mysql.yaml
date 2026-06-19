@@ -61,6 +61,7 @@ spec:
             - "--log-bin=mysql-bin"
             - "--binlog-format=ROW"
             - "--binlog-row-image=FULL"
+            - "--binlog-expire-logs-seconds={{ .Values.mysql.binlogExpireLogsSeconds }}"
 
           volumeMounts:
             - name: mysql-storage
@@ -100,6 +101,8 @@ spec:
         name: mysql-storage
 
       spec:
+        storageClassName: {{ .Values.mysql.storageClassName }}
+
         accessModes:
           - ReadWriteOnce
 
